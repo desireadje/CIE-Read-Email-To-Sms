@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- Debut Header -->
+<th:block th:include="partials/_head/index :: head"></th:block>
+<!-- Fin Header -->
+
+
+<body class="hold-transition sidebar-mini layout-fixed">
+	<div class="wrapper">
+
+		<!-- Debut TopBar -->
+		<th:block th:include="partials/_topbar/index :: topbar"></th:block>
+		<!-- Fin TopBar -->
+
+		<!-- Main Sidebar Container -->
+		<!-- Debut Left Side Bar -->
+		<th:block th:include="partials/_left_sidebar/index :: left-sidebar"></th:block>
+		<!-- Fin Left Side Bar -->
+
+
+		<div class="content" th:fragment="container">
+			<!-- Content Wrapper. Contains page content -->
+			<div class="content-wrapper">
+
+				<!-- Content Header (Page header) -->
+				<div class="content-header">
+					<div class="container-fluid">
+						<div class="row mb-2">
+							<div class="col-sm-6">
+								<h1 class="m-0 text-dark">Communes</h1>
+							</div>
+							<!-- /.col -->
+							<div class="col-sm-6">
+								<ol class="breadcrumb float-sm-right">
+									<li class="breadcrumb-item"><a href="#">Accueil</a></li>
+									<li class="breadcrumb-item"><a href="#">Param&egrave;tres</a></li>
+									<li class="breadcrumb-item active">Communes</li>
+								</ol>
+							</div>
+							<!-- /.col -->
+						</div>
+						<!-- /.row -->
+					</div>
+					<!-- /.container-fluid -->
+				</div>
+				<!-- /.content-header -->
+
+				<!-- Main content -->
+				<section class="content">
+					<div class="container-fluid">
+
+
+						<!-- Main content -->
+						<section class="content">
+							<div class="container-fluid">
+								<div class="row">
+									<!-- left column -->
+									<div class="col-md-12">
+										<!-- jquery validation -->
+										<div class="card card-primary">
+											<div class="card-header">
+												<h3 class="card-title">Formulaire de cr&eacute;ation</h3>
+											</div>
+											<!-- /.card-header -->
+											<!-- form start -->
+											<form th:action="@{/commune/create}" method="post"
+												role="form" th:object="${commune}">
+
+												<div class="card-body">
+
+													<!-- pays -->
+													<div class="form-group">
+														<label for="idPays">Pays</label> <select
+															for="idPays" th:field="*{pays}"
+															class="form-control" style="width: 100%;">
+															<option th:each="pays: ${pays}"
+																th:value="${pays.idPays}" th:text="${pays.nom}" />
+														</select>
+													</div>
+
+
+													<!-- nom -->
+													<div class="form-group">
+														<label for="raisonSociale">Nom</label> <input type="text"
+															th:field="*{nom}" class="form-control" id="nom"
+															/> <span class="text-danger"
+															th:errors="*{nom}"></span>
+													</div>
+
+												</div>
+												<!-- /.card-body -->
+												<div class="card-footer">
+													<a th:href="@{/commune}" type="button"
+														class="btn btn-default btn-sm" data-dismiss="modal"> <span
+														class="fa fa-reply-all"></span> Retour
+													</a>
+													<button type="submit" class="btn btn-primary btn-sm">
+														<span class="fa fa-save"></span> Enregistrer
+													</button>
+												</div>
+											</form>
+										</div>
+										<!-- /.card -->
+									</div>
+									<!--/.col (left) -->
+									<!-- right column -->
+									<div class="col-md-6"></div>
+									<!--/.col (right) -->
+								</div>
+								<!-- /.row -->
+							</div>
+							<!-- /.container-fluid -->
+						</section>
+						<!-- /.content -->
+
+
+					</div>
+					<!-- /.container-fluid -->
+				</section>
+				<!-- /.content -->
+			</div>
+			<!-- /.content-wrapper -->
+		</div>
+
+
+		<!-- Footer Start -->
+		<th:block th:include="partials/_footer/index :: footer"></th:block>
+		<!-- Footer End -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- Debut Foot -->
+	<th:block th:include="partials/_foot/index :: foot"></th:block>
+	<!-- Fin Foot -->
+</body>
+</html>
+

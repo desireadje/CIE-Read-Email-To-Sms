@@ -15,6 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true) // Pour proteger toutes les méthodes (DAO, Metier ...)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+	
+
 	@Autowired
 	public void globalConfig(AuthenticationManagerBuilder auth, DataSource dataSource) throws Exception {
 
@@ -29,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable()
 
-				.authorizeRequests().antMatchers("/build/**", "/dist/**", "/plugins/**", "/shared/**", "/service/refreshPassword")
+		.authorizeRequests().antMatchers("/dist/**", "/plugins/**", "/shared/**")
 				.permitAll() // Ressources à autoriser à tout le monde
 				.anyRequest().authenticated()
 				.and().formLogin().loginPage("/login") .failureUrl("/login").permitAll().defaultSuccessUrl("/")
@@ -39,4 +41,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.permitAll();
 
 	}
+
 }

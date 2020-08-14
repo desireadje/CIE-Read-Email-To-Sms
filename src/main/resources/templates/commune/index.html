@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- Debut Header -->
+<th:block th:include="partials/_head/index :: head"></th:block>
+<!-- Fin Header -->
+
+
+<body class="hold-transition sidebar-mini layout-fixed">
+	<div class="wrapper">
+
+		<!-- Debut TopBar -->
+		<th:block th:include="partials/_topbar/index :: topbar"></th:block>
+		<!-- Fin TopBar -->
+
+		<!-- Main Sidebar Container -->
+		<!-- Debut Left Side Bar -->
+		<th:block th:include="partials/_left_sidebar/index :: left-sidebar"></th:block>
+		<!-- Fin Left Side Bar -->
+
+
+		<div class="content" th:fragment="container">
+			<!-- Content Wrapper. Contains page content -->
+			<div class="content-wrapper">
+
+				<!-- Content Header (Page header) -->
+				<div class="content-header">
+					<div class="container-fluid">
+						<div class="row mb-2">
+							<div class="col-sm-6">
+								<h1 class="m-0 text-dark">Communes</h1>
+							</div>
+							<!-- /.col -->
+							<div class="col-sm-6">
+								<ol class="breadcrumb float-sm-right">
+									<li class="breadcrumb-item"><a href="#">Accueil</a></li>
+									<li class="breadcrumb-item"><a href="#">Param&egrave;tres</a></li>
+									<li class="breadcrumb-item active">Communes</li>
+								</ol>
+							</div>
+							<!-- /.col -->
+						</div>
+						<!-- /.row -->
+					</div>
+					<!-- /.container-fluid -->
+				</div>
+				<!-- /.content-header -->
+
+				<!-- Main content -->
+				<section class="content">
+					<div class="container-fluid">
+
+						<!-- /.card -->
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">Liste des communes</h3>
+								
+								<div class="col-sm-12">
+									<div class="btn-group float-sm-right">
+										<div class="form-group">
+											<a th:href="@{/commune/formcreate}" class="btn btn-primary btn-sm">
+												<i class="fa fa-plus"> </i> Ajouter
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- /.card-header -->
+							<div class="card-body">
+								<table id="example1" class="table table-bordered table-striped">
+									<thead>
+										<tr>
+											<th>N&deg;</th>
+											<th>Pays</th>
+											<th>Communes</th>
+											<th>Actions</th>
+										</tr>
+									</thead>
+
+
+									<tbody>
+										<tr th:each="e:${communes}">
+											<td th:text="${e.idCommune}"></td>
+											<td th:text="${e.pays.nom}"></td>
+											<td th:text="${e.nom}"></td>
+											<td><a
+												th:href="@{/commune/formupdate(id=${e.idCommune})}"
+												class="btn btn-primary btn-sm"> <i class="fa fa-edit"> </i>
+													Modifier
+											</a> <a
+												onclick="return confirm('Voulez-vous supprimer cette commune ?')"
+												th:href="@{/commune/delete(id=${e.idCommune})}"
+												class="btn btn-danger btn-sm"> <i class="fa fa-trash"> </i>
+													Supprimer
+											</a></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<!-- /.card-body -->
+						</div>
+						<!-- /.card -->
+					</div>
+					<!-- /.container-fluid -->
+				</section>
+				<!-- /.content -->
+			</div>
+			<!-- /.content-wrapper -->
+		</div>
+
+
+		<!-- Footer Start -->
+		<th:block th:include="partials/_footer/index :: footer"></th:block>
+		<!-- Footer End -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- Debut Foot -->
+	<th:block th:include="partials/_foot/index :: foot"></th:block>
+	<!-- Fin Foot -->
+</body>
+</html>

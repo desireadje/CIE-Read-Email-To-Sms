@@ -1,0 +1,89 @@
+<div th:fragment="left-sidebar">
+	<aside class="main-sidebar sidebar-dark-primary elevation-4">
+		<!-- Brand Logo -->
+		<a th:href="@{/}" class="brand-link"> <img
+			th:src="@{/dist/img/AdminLTELogo.png}" alt="HyperBilling"
+			class="brand-image img-circle elevation-3" style="opacity: .8">
+			<span class="brand-text font-weight-light">Email To SMS</span>
+		</a>
+
+		<!-- Sidebar -->
+		<div class="sidebar">
+
+			<!-- Sidebar Menu -->
+			<nav class="mt-2">
+				<ul class="nav nav-pills nav-sidebar flex-column"
+					data-widget="treeview" role="menu" data-accordion="false">
+					<!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+
+					<!-- Tableau de bord ${active} ? active : ''-->
+					<li class="nav-item"><a th:href="@{/}" class="nav-link"
+						th:classappend="${(active_menu == '' || active_menu == 'accueil') ? 'active':''}">
+							<i class="nav-icon fas fa-tachometer-alt"></i>
+							<p>Tableau de bord</p>
+					</a></li>
+
+					<!-- Personnel ${active} ? active : ''-->
+					<li class="nav-item"><a th:href="@{/personnel}"
+						class="nav-link"
+						th:classappend="${(active_menu == '' || active_menu == 'personnel') ? 'active':''}">
+							<i class="nav-icon fas fa-tachometer-alt"></i>
+							<p>Membre du persnnel</p>
+					</a></li>
+
+					<!-- Personnel ${active} ? active : ''-->
+					<li class="nav-item"><a th:href="@{/modele-sms}"
+						class="nav-link"
+						th:classappend="${(active_menu == '' || active_menu == 'modelesms') ? 'active':''}">
+							<i class="nav-icon fas fa-tachometer-alt"></i>
+							<p>Mod&agrave;le de SMS</p>
+					</a></li>
+
+
+
+					<!-- Parametre -->
+					<li class="nav-item has-treeview"
+						th:classappend="${(open_menu == 'paramtre' || open_menu == 'paramtre') ? 'menu-open':''}"><a
+						href="#" class="nav-link"
+						th:classappend="${(active_menu == 'vente' || active_menu == 'client') ? 'active':''}">
+							<i class="nav-icon fa fa-home"></i>
+							<p>
+								Param&agrave;tres<i class="right fas fa-angle-left"></i>
+							</p>
+					</a>
+
+						<ul class="nav nav-treeview">
+							<li class="nav-item"><a th:href="@{/paramtre-api}"
+								class="nav-link"
+								th:classappend="${active_menu == 'api' ? 'active':''}"> <i
+									class="far fa-circle nav-icon"></i>
+									<p>Api</p>
+							</a></li>
+							<li class="nav-item"><a th:href="@{/paramtre-smtp}"
+								class="nav-link"
+								th:classappend="${active_menu == 'smtp' ? 'active':''}"> <i
+									class="far fa-circle nav-icon"></i>
+									<p>Smtp</p>
+							</a></li>
+							<li class="nav-item"><a th:href="@{/utilisateur}"
+								class="nav-link"
+								th:classappend="${active_menu == 'utilisateur' ? 'active':''}">
+									<i class="far fa-circle nav-icon"></i>
+									<p>Compte utilisateur</p>
+							</a></li>
+						</ul></li>
+
+
+
+
+
+
+				</ul>
+			</nav>
+			<!-- /.sidebar-menu -->
+		</div>
+		<!-- /.sidebar -->
+	</aside>
+
+</div>
