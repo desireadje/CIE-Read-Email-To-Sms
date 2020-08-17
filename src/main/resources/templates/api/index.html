@@ -76,7 +76,7 @@
 										</thead>
 
 										<tbody>
-											<tr th:each="e:${Api}">
+											<tr th:each="e:${Apis}">
 												<td class="text-nowrap" th:text="${e.Url}"></td>
 												<td th:text="${e.Username}"></td>
 												<td th:text="${e.Sender}"></td>
@@ -85,10 +85,10 @@
 												<td th:text="${e.Method_full}"></td>
 												<td th:text="${e.Method_bulk}"></td>
 												<td th:text="${e.Flash}"></td>
-												<td th:text="${e.Titre}"></td>
-												<td class="text-nowrap" th:text="${e.dateModification}"></td>
+												<td th:text="${e.Title}"></td>
+												<td class="text-nowrap" th:text="${e.DateModification}"></td>
 												<td class="text-nowrap"><a
-													th:href="@{/api/formupdate(id=${e.id})}"
+													th:href="@{/parametre-api/formupdate(id=${e.id})}"
 													class="btn btn-primary btn-sm"> <i class="fa fa-edit">
 													</i> Modifier
 												</a></td>

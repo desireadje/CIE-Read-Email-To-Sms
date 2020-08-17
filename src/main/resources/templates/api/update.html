@@ -28,14 +28,14 @@
 					<div class="container-fluid">
 						<div class="row mb-2">
 							<div class="col-sm-6">
-								<h1 class="m-0 text-dark">Param&egrave;tre MySql</h1>
+								<h1 class="m-0 text-dark">Param&egrave;tres Api</h1>
 							</div>
 							<!-- /.col -->
 							<div class="col-sm-6">
 								<ol class="breadcrumb float-sm-right">
 									<li class="breadcrumb-item"><a href="#">Accueil</a></li>
 									<li class="breadcrumb-item"><a href="#">Param&egrave;tres</a></li>
-									<li class="breadcrumb-item active">MySql</li>
+									<li class="breadcrumb-item active">Api</li>
 								</ol>
 							</div>
 							<!-- /.col -->
@@ -50,7 +50,6 @@
 				<section class="content">
 					<div class="container-fluid">
 
-
 						<!-- Main content -->
 						<section class="content">
 							<div class="container-fluid">
@@ -60,66 +59,81 @@
 										<!-- jquery validation -->
 										<div class="card card-primary">
 											<div class="card-header">
-												<h3 class="card-title">Formulaire de modification</h3>
+												<h3 class="card-title">Formulaire de cr&eacute;ation</h3>
 											</div>
 											<!-- /.card-header -->
 											<!-- form start -->
-											<form th:action="@{/parametre-mysql/update}" method="post"
-												role="form" th:object="${Mysql}">
+											<form th:action="@{/parametre-api/update}" method="post" role="form"
+												th:object="${API}">
 
 												<div class="card-body">
 
-													<input type="hidden" th:field="*{id}" class="form-control" />
+													<input type="hidden" th:field="*{id}" class="form-control"
+														id="id" placeholder="" />
 
 													<div class="row">
+
 														<div class="col-md-6">
-															<!-- dbname -->
+															<!-- host -->
 															<div class="form-group">
-																<label for="dbname">Base de donn&eacute;es</label> <input
-																	type="text" th:field="*{dbname}"
-																	placeholder="Base de donn&eacute;es"
-																	class="form-control" id="libelle" /> <span
-																	class="text-danger" th:errors="*{dbname}"></span>
+																<label for="Url">Host</label> <input type="text"
+																	th:field="*{Url}" class="form-control" id="Url"
+																	placeholder="Host" /> <span class="text-danger"
+																	th:errors="*{Url}"></span>
+															</div>
+
+															<!-- Username -->
+															<div class="form-group">
+																<label for="Username">Username</label> <input
+																	type="text" th:field="*{Username}" class="form-control"
+																	id="Username" placeholder="Username" /> <span
+																	class="text-danger" th:errors="*{Username}"></span>
 															</div>
 
 															<!-- driver -->
 															<div class="form-group">
-																<label for="driver">Driver</label> <input type="text"
-																	th:field="*{driver}" placeholder="Driver"
-																	class="form-control" id="driver" /> <span
-																	class="text-danger" th:errors="*{driver}"></span>
+																<label for=Sender>Sender</label> <input type="text"
+																	th:field="*{Sender}" class="form-control" id="Sender"
+																	placeholder="Sender" /> <span class="text-danger"
+																	th:errors="*{Sender}"></span>
 															</div>
 
 														</div>
 
-
-
-
 														<div class="col-md-6">
 
-															<!-- username -->
+															<!-- Token -->
 															<div class="form-group">
-																<label for="username">Username</label> <input
-																	type="text" th:field="*{username}" placeholder="Driver"
-																	class="form-control" id="username" /> <span
-																	class="text-danger" th:errors="*{username}"></span>
+																<label for=Token>Token</label> <input type="text"
+																	th:field="*{Token}" class="form-control" id="Token"
+																	placeholder="Token" /> <span class="text-danger"
+																	th:errors="*{Token}"></span>
 															</div>
 
-															<!-- password -->
+															<!-- Flash -->
 															<div class="form-group">
-																<label for="username">Mot de passe</label> <input
-																	type="text" th:field="*{password}"
-																	placeholder="Mot de passe" class="form-control"
-																	id="password" /> <span class="text-danger"
-																	th:errors="*{password}"></span>
+																<label for="Flash">Flash</label> <input type="text"
+																	th:field="*{Flash}" class="form-control" id="Flash"
+																	placeholder="Flash" /> <span class="text-danger"
+																	th:errors="*{Flash}"></span>
 															</div>
+
+
+															<!-- Titre -->
+															<div class="form-group">
+																<label for=Title>Titre</label> <input type="text"
+																	th:field="*{Title}" class="form-control" id="Title"
+																	placeholder="Title" /> <span class="text-danger"
+																	th:errors="*{Title}"></span>
+															</div>
+
 														</div>
 													</div>
 
 												</div>
 												<!-- /.card-body -->
 												<div class="card-footer">
-													<a th:href="@{/parametre-mysql}" type="button"
+													<a th:href="@{/parametre-api}" type="button"
 														class="btn btn-default btn-sm" data-dismiss="modal"> <span
 														class="fa fa-reply-all"></span> Retour
 													</a>

@@ -1,13 +1,12 @@
 package com.emailtosms.controllers;
 
+import java.util.Date;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +16,6 @@ import com.emailtosms.entities.ParametreMySql;
 import com.emailtosms.repositories.MySqlRepository;
 
 @Controller
-@CrossOrigin("*")
 @RequestMapping(value = "/parametre-mysql")
 public class ParametreMySqlController {
 
@@ -26,8 +24,11 @@ public class ParametreMySqlController {
 
 	@GetMapping()
 	public String page(Model model, HttpSession session) {
+		ParametreMySql mysql = mySqlRepos.findMysqlParam();
+		
 		// Je retourne ma vue
-		model.addAttribute("Mysql", mySqlRepos.findAll());
+		model.addAttribute("Mysql", mysql);
+		
 		return "mysql/index";
 
 	}
@@ -59,6 +60,28 @@ public class ParametreMySqlController {
 			e.printStackTrace();
 		}
 		return "mysql/update";
+	}
+	
+	/*
+	 * Fonction qui modification
+	 */
+	@PostMapping(value = "/update")
+	public String update(ParametreMySql a, BindingResult bindingResult) {
+		ParametreMySql msql = null;
+		try {
+			if (bindingResult.hasErrors()) {
+				return "parametre-mysql/update";
+			}
+
+			msql = findOne(a.getId());
+			if (msql != null) {				
+				a.setDateModification(new Date());
+				a = mySqlRepos.save(a);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "redirect:/parametre-mysql";
 	}
 
 }
