@@ -11,6 +11,8 @@ import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.sun.istack.NotNull;
+
 @Entity
 @Table(name = "utilisateur")
 public class Utilisateur implements Serializable {
@@ -19,14 +21,15 @@ public class Utilisateur implements Serializable {
 
 	// Attributs
 	@Id
+	@NotNull()
 	private String username;
+	@NotNull()
 	private String password;
 	private String civilite;
 	private String nom;
 	private String prenoms;
 
-	// @NotEmpty()
-	// @Email
+	@NotNull()
 	private String email;
 
 	@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")

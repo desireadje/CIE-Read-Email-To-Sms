@@ -3,6 +3,7 @@ package com.emailtosms.entities;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,6 +24,7 @@ public class ModeleSms implements Serializable {
 	private Long id;
 
 	private String libelle;
+	@Column(columnDefinition = "TEXT")
 	private String contenu;
 
 	@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
@@ -30,7 +32,7 @@ public class ModeleSms implements Serializable {
 	@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
 	private Date dateModification;
 
-	private int etat = 0;
+	private int etat;
 
 	// constructeur sans params
 	public ModeleSms() {

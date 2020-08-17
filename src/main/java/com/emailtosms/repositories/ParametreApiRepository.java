@@ -8,7 +8,7 @@ import com.emailtosms.entities.ParametreApi;
 public interface ParametreApiRepository extends JpaRepository<ParametreApi, Long> {
 
 	// Cette requête retourne la liste des mail a notifier
-	@Query("SELECT a FROM ParametreApi a WHERE a.id = 1")
+	@Query("SELECT a FROM ParametreApi a WHERE a.id=1")
 	ParametreApi findParamApi();
 
 }

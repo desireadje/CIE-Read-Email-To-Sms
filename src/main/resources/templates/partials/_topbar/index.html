@@ -10,46 +10,19 @@
 				href="#"><i class="fas fa-bars"></i></a></li>
 		</ul>
 
-		<!-- SEARCH FORM -->
-		<form class="form-inline ml-3">
-			<div class="input-group input-group-sm">
-				<input class="form-control form-control-navbar" type="search"
-					placeholder="Rechercher" aria-label="Rechercher">
-				<div class="input-group-append">
-					<button class="btn btn-navbar" type="submit">
-						<i class="fas fa-search"></i>
-					</button>
-				</div>
-			</div>
-		</form>
-
-
-
 		<!-- Right navbar links -->
 		<ul class="navbar-nav ml-auto">
 
-			
-				
-				
-			
 
-			
-			
+
 			<!-- Notifications Dropdown Menu -->
 			<li class="nav-item dropdown"><a class="nav-link"
-				data-toggle="dropdown" href="#"> <i class="fa fa-user"></i> 
+				data-toggle="dropdown" href="#"> <i class="fa fa-user"></i>
 			</a>
 				<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-					<a th:href="@{/utilisateur/profil}" class="dropdown-item"> <i
-						class="fa fa-user mr-sm"></i> Mon profil
-					</a>
 					<div class="dropdown-divider"></div>
-					<a th:href="@{/utilisateur/lockscreen}" class="dropdown-item"> <i class="fa fa-lock mr-sm"></i>
-						V&eacute;rrouiller
-					</a>
-					<div class="dropdown-divider"></div>
-					<a th:href="@{/logout}" class="dropdown-item"> <i class="fas fa-sign-in-alt"></i>
-						D&eacute;connexion
+					<a th:href="@{/logout}" class="dropdown-item"> <i
+						class="fas fa-sign-in-alt"></i> D&eacute;connexion
 					</a>
 				</div></li>
 

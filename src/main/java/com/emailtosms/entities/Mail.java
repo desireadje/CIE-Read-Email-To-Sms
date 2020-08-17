@@ -22,8 +22,8 @@ public class Mail implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	private String code;
 	private String idmail;
-
 	private String identifiant;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -44,7 +44,6 @@ public class Mail implements Serializable {
 	@Column(columnDefinition = "TEXT")
 
 	private String nom;
-	private String prenoms;
 	private String numero;
 	private String service;
 
@@ -57,7 +56,7 @@ public class Mail implements Serializable {
 	@Column(columnDefinition = "TEXT")
 	private String html;
 
-	private int etat;
+	private int etat = 0;
 	private int paraid;
 
 	@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
@@ -72,10 +71,12 @@ public class Mail implements Serializable {
 	}
 
 	// constructeur avec params
-	public Mail(String idmail, String identifiant, Date date_send, Date date_recup, Date date_insertion, String sujet,
-			String fromm, String too, String nom, String prenoms, String numero, String service, String cc, String bcc,
-			String text, String html, int etat, int paraid, Date dateCreation, Date dateModification) {
+	public Mail(String code, String idmail, String identifiant, Date date_send, Date date_recup, Date date_insertion,
+			String sujet, String fromm, String too, String nom, String numero, String service,
+			String cc, String bcc, String text, String html, int etat, int paraid, Date dateCreation,
+			Date dateModification) {
 		super();
+		this.code = code;
 		this.idmail = idmail;
 		this.identifiant = identifiant;
 		this.date_send = date_send;
@@ -85,7 +86,6 @@ public class Mail implements Serializable {
 		this.fromm = fromm;
 		this.too = too;
 		this.nom = nom;
-		this.prenoms = prenoms;
 		this.numero = numero;
 		this.service = service;
 		this.cc = cc;
@@ -108,6 +108,14 @@ public class Mail implements Serializable {
 
 	public String getIdmail() {
 		return idmail;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getCode() {
+		return code;
 	}
 
 	public void setIdmail(String idmail) {
@@ -176,14 +184,6 @@ public class Mail implements Serializable {
 
 	public void setNom(String nom) {
 		this.nom = nom;
-	}
-
-	public String getPrenoms() {
-		return prenoms;
-	}
-
-	public void setPrenoms(String prenoms) {
-		this.prenoms = prenoms;
 	}
 
 	public String getNumero() {

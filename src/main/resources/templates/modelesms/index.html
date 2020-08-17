@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- Debut Header -->
+<th:block th:include="partials/_head/index :: head"></th:block>
+<!-- Fin Header -->
+
+
+<body class="hold-transition sidebar-mini layout-fixed">
+	<div class="wrapper">
+
+		<!-- Debut TopBar -->
+		<th:block th:include="partials/_topbar/index :: topbar"></th:block>
+		<!-- Fin TopBar -->
+
+		<!-- Main Sidebar Container -->
+		<!-- Debut Left Side Bar -->
+		<th:block th:include="partials/_left_sidebar/index :: left-sidebar"></th:block>
+		<!-- Fin Left Side Bar -->
+
+
+		<div class="content" th:fragment="container">
+			<!-- Content Wrapper. Contains page content -->
+			<div class="content-wrapper">
+
+				<!-- Content Header (Page header) -->
+				<div class="content-header">
+					<div class="container-fluid">
+						<div class="row mb-2">
+							<div class="col-sm-6">
+								<h1 class="m-0 text-dark">Mod&egrave;les de SMS</h1>
+							</div>
+							<!-- /.col -->
+							<div class="col-sm-6">
+								<ol class="breadcrumb float-sm-right">
+									<li class="breadcrumb-item"><a href="#">Accueil</a></li>
+									<li class="breadcrumb-item"><a href="#">Param&egrave;tres</a></li>
+									<li class="breadcrumb-item active">Mod&egrave;les de SMS</li>
+								</ol>
+							</div>
+							<!-- /.col -->
+						</div>
+						<!-- /.row -->
+					</div>
+					<!-- /.container-fluid -->
+				</div>
+				<!-- /.content-header -->
+
+				<!-- Main content -->
+				<section class="content">
+					<div class="container-fluid">
+
+						<!-- /.card -->
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">Liste des mod&egrave;les de SMS</h3>
+
+								<div class="col-sm-12">
+									<div class="btn-group float-sm-right">
+										<div class="form-group">
+											<a th:href="@{/modele-sms/formcreate}"
+												class="btn btn-primary btn-sm"> <i class="fa fa-plus">
+											</i> Ajouter
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- /.card-header -->
+							<div class="card-body">
+								<table id="example1" class="table table-bordered table-striped">
+									<thead>
+										<tr>
+											<th>N&deg;</th>
+											<th>Libell&eacute;</th>
+											<th>Contenu</th>
+											<th>Date modification</th>
+											<th>Actions</th>
+										</tr>
+									</thead>
+
+
+									<tbody>
+										<tr th:each="e:${Modeles}">
+											<td th:text="${e.id}"></td>
+											<td th:text="${e.libelle}"></td>
+											<td th:text="${e.contenu}"></td>
+											<td th:text="${e.dateModification}"></td>
+											<td class="text-nowrap"><a
+												th:href="@{/modele-sms/formupdate(id=${e.id})}"
+												class="btn btn-primary btn-sm"> <i class="fa fa-edit">
+												</i> Modifier
+											</a> <a th:if="${e.etat == 0}"
+												onclick="return confirm('Voulez-vous activer ce mod&egrave;le de Sms ?')"
+												th:href="@{/modele-sms/active(id=${e.id})}"
+												class="btn btn-success btn-sm"> <i class="fa fa-check">
+												</i> Activer
+											</a> <a th:if="${e.etat == 1}"
+												onclick="return confirm('Voulez-vous d&eacute;sactiver ce mod&egrave;le de Sms ?')"
+												th:href="@{/modele-sms/active(id=${e.id})}"
+												class="btn btn-warning btn-sm"> <i class="fa fa-times">
+												</i> D&eacute;sactiver
+											</a> <a th:if="${e.etat == 0}"
+												onclick="return confirm('Voulez-vous supprimer ce mod&egrave;re de SMS ?')"
+												th:href="@{/modele-sms/delete(id=${e.id})}"
+												class="btn btn-danger btn-sm"> <i class="fa fa-trash">
+												</i> Supprimer
+											</a></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<!-- /.card-body -->
+						</div>
+						<!-- /.card -->
+					</div>
+					<!-- /.container-fluid -->
+				</section>
+				<!-- /.content -->
+			</div>
+			<!-- /.content-wrapper -->
+		</div>
+
+
+		<!-- Footer Start -->
+		<th:block th:include="partials/_footer/index :: footer"></th:block>
+		<!-- Footer End -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- Debut Foot -->
+	<th:block th:include="partials/_foot/index :: foot"></th:block>
+	<!-- Fin Foot -->
+</body>
+</html>

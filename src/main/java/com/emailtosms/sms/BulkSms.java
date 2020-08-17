@@ -1,4 +1,4 @@
-package com.emailtosms.entities;
+package com.emailtosms.sms;
 
 import java.util.ArrayList;
 
@@ -55,4 +55,5 @@ public class BulkSms {
 	public void setMssg(ArrayList<Message> mssg) {
 		Mssg = mssg;
 	}
+
 }

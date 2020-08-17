@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- Debut Header -->
+<th:block th:include="partials/_head/index :: head"></th:block>
+<!-- Fin Header -->
+
+
+<body class="hold-transition sidebar-mini layout-fixed">
+	<div class="wrapper">
+
+		<!-- Debut TopBar -->
+		<th:block th:include="partials/_topbar/index :: topbar"></th:block>
+		<!-- Fin TopBar -->
+
+		<!-- Main Sidebar Container -->
+		<!-- Debut Left Side Bar -->
+		<th:block th:include="partials/_left_sidebar/index :: left-sidebar"></th:block>
+		<!-- Fin Left Side Bar -->
+
+
+		<div class="content" th:fragment="container">
+			<!-- Content Wrapper. Contains page content -->
+			<div class="content-wrapper">
+
+				<!-- Content Header (Page header) -->
+				<div class="content-header">
+					<div class="container-fluid">
+						<div class="row mb-2">
+							<div class="col-sm-6">
+								<h1 class="m-0 text-dark">Mails
+									r&eacute;cup&eacute;r&eacute;s</h1>
+							</div>
+							<!-- /.col -->
+							<div class="col-sm-6">
+								<ol class="breadcrumb float-sm-right">
+									<li class="breadcrumb-item"><a href="#">Accueil</a></li>
+									<li class="breadcrumb-item active">Mails
+										r&eacute;cup&eacute;r&eacute;s</li>
+								</ol>
+							</div>
+							<!-- /.col -->
+						</div>
+						<!-- /.row -->
+					</div>
+					<!-- /.container-fluid -->
+				</div>
+				<!-- /.content-header -->
+
+				<!-- Main content -->
+				<section class="content">
+					<div class="container-fluid">
+
+						<!-- /.card -->
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">Liste des mails
+									r&eacute;cup&eacute;r&eacute;s</h3>
+							</div>
+							<!-- /.card-header -->
+							<div class="card-body">
+								<div class="table-responsive">
+
+									<table id="example1" class="table table-bordered table-striped">
+										<thead class="text-nowrap">
+											<tr>
+												<th>N&deg;</th>
+												<th>Date de r&eacute;ception</th>
+												<th>Sujet</th>
+												<th>Exp&eacute;diteur</th>
+												<th>Destinataire</th>
+												<th>Personnel / Num&eacute;ro</th>
+												<th>Status</th>
+											</tr>
+										</thead>
+
+
+										<tbody>
+											<tr th:each="e:${Mails}">
+												<td th:text="${e.id}"></td>
+												<td th:text="${e.date_recup}"></td>
+												<td class="text-nowrap" th:text="${e.sujet}"></td>
+												<td th:text="${e.fromm}"></td>
+												<td th:text="${e.too}"></td>
+												<td><span th:text="${e.nom}"></span> / <span th:text="${e.numero}"></span></td>
+												<td class="text-nowrap"><a th:if="${e.etat == 0}"
+													class="btn btn-warning btn-sm"> <i
+														class="fa fa-warning"> </i> Non trait&eacute;
+												</a> <a th:if="${e.etat == 1}"
+													class="btn btn-success btn-sm text-white"> <i
+														class="fa fa-check"> </i> Trait&eacute;
+												</a></td>
+											</tr>
+										</tbody>
+									</table>
+
+								</div>
+							</div>
+							<!-- /.card-body -->
+						</div>
+						<!-- /.card -->
+					</div>
+					<!-- /.container-fluid -->
+				</section>
+				<!-- /.content -->
+			</div>
+			<!-- /.content-wrapper -->
+		</div>
+
+
+		<!-- Footer Start -->
+		<th:block th:include="partials/_footer/index :: footer"></th:block>
+		<!-- Footer End -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- Debut Foot -->
+	<th:block th:include="partials/_foot/index :: foot"></th:block>
+	<!-- Fin Foot -->
+</body>
+</html>

@@ -1,4 +1,4 @@
-package com.emailtosms.entities;
+package com.emailtosms.sms;
 
 public class Destinataire {
 
