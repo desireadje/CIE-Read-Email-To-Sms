@@ -50,8 +50,8 @@ public class ServiceEmailToSms {
 	 * @param user
 	 * @param password
 	 */
-	// @Scheduled(fixedDelay = 10000)
-	public void ReadMySqldDataBase() throws Exception {
+	@Scheduled(fixedDelay = 10000)
+	public void ReadMySqlDatabase() throws Exception {
 
 		System.err.println(Utils.dateNow() + " Run readMySqldDataBase");
 
