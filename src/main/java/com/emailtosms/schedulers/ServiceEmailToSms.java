@@ -14,12 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import com.emailtosms.entities.Mail;
-import com.emailtosms.entities.ModeleSms;
 import com.emailtosms.entities.ParametreApi;
 import com.emailtosms.http.BulkSmsHttp;
 import com.emailtosms.methods.Utils;
 import com.emailtosms.repositories.MailRepository;
-import com.emailtosms.repositories.ModeleSmsRepository;
 import com.emailtosms.repositories.ParametreApiRepository;
 import com.emailtosms.sms.BulkSms;
 import com.emailtosms.sms.Message;
@@ -33,9 +31,6 @@ public class ServiceEmailToSms {
 
 	@Autowired
 	private ParametreApiRepository apiRepos;
-
-	@Autowired
-	private ModeleSmsRepository modeleSmsRepos;
 
 	private Connection con = null;
 	private Statement statement = null;
@@ -247,10 +242,6 @@ public class ServiceEmailToSms {
 			List<Mail> mails = null;
 			mails = mailRepos.findAllMailForSendSms();
 
-			// 7. Je recherche les modèle de sms.
-			ModeleSms modeleSms = null;
-			modeleSms = modeleSmsRepos.findModeleSms();
-
 			// 8. Je verifie que les tickets (CallMissed) et modele de sms ne sont pas
 			// null.
 			if (mails.size() != 0) {
@@ -266,7 +257,7 @@ public class ServiceEmailToSms {
 					String dest = null;
 
 					// 12. Je recheche le modèle de SMS approprié au type de ticket.
-					sms = mail.getToo();
+					sms = mail.getText();
 					dest = mail.getNumero();
 
 					// Si le numéro eexiste alors...
@@ -292,11 +283,7 @@ public class ServiceEmailToSms {
 					updateBulkSms(mails);
 				}
 			} else {
-				if (mails.size() == 0) {
-					System.err.println(Utils.dateNow() + " Aucun mail reçu disponible.");
-				} else {
-					System.err.println(Utils.dateNow() + " Aucun modèle de SMS disponible.");
-				}
+				System.err.println(Utils.dateNow() + " Aucun mail reçu disponible.");
 			}
 		} else {
 			System.err.println(Utils.dateNow() + " Aucun paramètre Api disponible.");
@@ -324,5 +311,6 @@ public class ServiceEmailToSms {
 			System.err.println(Utils.dateNow() + " La liste des mails est vide pour la mise à jour.");
 		}
 	}
+
 
 }

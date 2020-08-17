@@ -24,52 +24,21 @@
 							<p>Tableau de bord</p>
 					</a></li>
 
-					<!-- Personnel ${active} ? active : ''-->
-					<li class="nav-item"><a th:href="@{/modele-sms}"
+					<!-- Api ${active} ? active : ''-->
+					<li class="nav-item"><a th:href="@{/parametre-api}"
 						class="nav-link"
-						th:classappend="${(active_menu == '' || active_menu == 'modelesms') ? 'active':''}">
+						th:classappend="${(active_menu == '' || active_menu == 'accueil') ? 'active':''}">
 							<i class="nav-icon fas fa-tachometer-alt"></i>
-							<p>Mod&agrave;le de SMS</p>
+							<p>Param&egrave;tres Api</p>
 					</a></li>
 
-
-
-					<!-- Parametre -->
-					<li class="nav-item has-treeview"
-						th:classappend="${(open_menu == 'paramtre' || open_menu == 'paramtre') ? 'menu-open':''}"><a
-						href="#" class="nav-link"
-						th:classappend="${(active_menu == 'vente' || active_menu == 'client') ? 'active':''}">
-							<i class="nav-icon fa fa-home"></i>
-							<p>
-								Param&egrave;tres<i class="right fas fa-angle-left"></i>
-							</p>
-					</a>
-
-						<ul class="nav nav-treeview">
-							<li class="nav-item"><a th:href="@{/parametre-api}"
-								class="nav-link"
-								th:classappend="${active_menu == 'api' ? 'active':''}"> <i
-									class="far fa-circle nav-icon"></i>
-									<p>Api</p>
-							</a></li>
-							<li class="nav-item"><a th:href="@{/paramtre-smtp}"
-								class="nav-link"
-								th:classappend="${active_menu == 'smtp' ? 'active':''}"> <i
-									class="far fa-circle nav-icon"></i>
-									<p>Smtp</p>
-							</a></li>
-							<li class="nav-item"><a th:href="@{/utilisateur}"
-								class="nav-link"
-								th:classappend="${active_menu == 'utilisateur' ? 'active':''}">
-									<i class="far fa-circle nav-icon"></i>
-									<p>Compte utilisateur</p>
-							</a></li>
-						</ul></li>
-
-
-
-
-
+					<!-- Api ${active} ? active : ''-->
+					<li class="nav-item"><a th:href="@{/parametre-mysql}"
+						class="nav-link"
+						th:classappend="${(active_menu == '' || active_menu == 'accueil') ? 'active':''}">
+							<i class="nav-icon fas fa-tachometer-alt"></i>
+							<p>Param&egrave;tres MySql</p>
+					</a></li>
 
 				</ul>
 			</nav>

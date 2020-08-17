@@ -28,14 +28,14 @@
 					<div class="container-fluid">
 						<div class="row mb-2">
 							<div class="col-sm-6">
-								<h1 class="m-0 text-dark">Communes</h1>
+								<h1 class="m-0 text-dark">Param&egrave;tre MySql</h1>
 							</div>
 							<!-- /.col -->
 							<div class="col-sm-6">
 								<ol class="breadcrumb float-sm-right">
 									<li class="breadcrumb-item"><a href="#">Accueil</a></li>
 									<li class="breadcrumb-item"><a href="#">Param&egrave;tres</a></li>
-									<li class="breadcrumb-item active">Communes</li>
+									<li class="breadcrumb-item active">MySql</li>
 								</ol>
 							</div>
 							<!-- /.col -->
@@ -60,38 +60,48 @@
 										<!-- jquery validation -->
 										<div class="card card-primary">
 											<div class="card-header">
-												<h3 class="card-title">Formulaire de cr&eacute;ation</h3>
+												<h3 class="card-title">Formulaire de modification</h3>
 											</div>
 											<!-- /.card-header -->
 											<!-- form start -->
-											<form th:action="@{/commune/create}" method="post"
-												role="form" th:object="${commune}">
+											<form th:action="@{/parametre-mysql/update}" method="post"
+												role="form" th:object="${Mysql}">
 
 												<div class="card-body">
 
-													<!-- pays -->
+													<input type="hidden" th:field="*{id}" class="form-control" />
+
+													<!-- libelle -->
 													<div class="form-group">
-														<label for="idPays">Pays</label> <select
-															for="idPays" th:field="*{pays}"
-															class="form-control" style="width: 100%;">
-															<option th:each="pays: ${pays}"
-																th:value="${pays.idPays}" th:text="${pays.nom}" />
-														</select>
+														<label for="libelle">Libell&eacute;</label> <input
+															type="text" th:field="*{libelle}"
+															placeholder="Libell&eacute;" class="form-control"
+															id="libelle" /> <span class="text-danger"
+															th:errors="*{libelle}"></span>
 													</div>
 
-
-													<!-- nom -->
+													<!-- contenu -->
 													<div class="form-group">
-														<label for="raisonSociale">Nom</label> <input type="text"
-															th:field="*{nom}" class="form-control" id="nom"
-															/> <span class="text-danger"
-															th:errors="*{nom}"></span>
+														<label for="contenu">Contenu</label>
+														<textarea th:field="*{contenu}" class="form-control"
+															id="contenu" placeholder="Contenu"></textarea>
+														<span class="text-danger" th:errors="*{contenu}"></span>
+													</div>
+
+													<!-- etat -->
+													<div class="form-group">
+														<label for="etat">Etat</label> <select for="etat"
+															th:field="*{etat}" class="form-control"
+															style="width: 100%;">
+															<option th:value="0">Desactiver</option>
+															<option th:value="1">Activer</option>
+														</select>
 													</div>
 
 												</div>
 												<!-- /.card-body -->
 												<div class="card-footer">
-													<a th:href="@{/commune}" type="button"
+													<a th:href="@{/parametre-mysql}" type="button"
 														class="btn btn-default btn-sm" data-dismiss="modal"> <span
 														class="fa fa-reply-all"></span> Retour
 													</a>

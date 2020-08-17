@@ -28,14 +28,14 @@
 					<div class="container-fluid">
 						<div class="row mb-2">
 							<div class="col-sm-6">
-								<h1 class="m-0 text-dark">Communes</h1>
+								<h1 class="m-0 text-dark">Param&egrave;tre MySql</h1>
 							</div>
 							<!-- /.col -->
 							<div class="col-sm-6">
 								<ol class="breadcrumb float-sm-right">
 									<li class="breadcrumb-item"><a href="#">Accueil</a></li>
 									<li class="breadcrumb-item"><a href="#">Param&egrave;tres</a></li>
-									<li class="breadcrumb-item active">Communes</li>
+									<li class="breadcrumb-item active">MySql</li>
 								</ol>
 							</div>
 							<!-- /.col -->
@@ -53,49 +53,40 @@
 						<!-- /.card -->
 						<div class="card">
 							<div class="card-header">
-								<h3 class="card-title">Liste des communes</h3>
-								
-								<div class="col-sm-12">
-									<div class="btn-group float-sm-right">
-										<div class="form-group">
-											<a th:href="@{/commune/formcreate}" class="btn btn-primary btn-sm">
-												<i class="fa fa-plus"> </i> Ajouter
-											</a>
-										</div>
-									</div>
-								</div>
+								<h3 class="card-title">MySql</h3>
 							</div>
 							<!-- /.card-header -->
 							<div class="card-body">
-								<table id="example1" class="table table-bordered table-striped">
-									<thead>
-										<tr>
-											<th>N&deg;</th>
-											<th>Pays</th>
-											<th>Communes</th>
-											<th>Actions</th>
-										</tr>
-									</thead>
+								<div class="table-responsive">
+									<table id="example1" class="table table-bordered table-striped">
+										<thead>
+											<tr class="text-nowrap">
+												<th>Base de donn&eacute;es</th>
+												<th>Username</th>
+												<th>Mot de passe</th>
+												<th>Driver</th>
+												<th>Date modification</th>
+												<th>Actions</th>
+											</tr>
+										</thead>
 
+										<tbody>
+											<tr th:each="e:${Mysql}">
+												<td class="text-nowrap" th:text="${e.dbname}"></td>
+												<td th:text="${e.username}"></td>
+												<td th:text="${e.password}"></td>
+												<td th:text="${e.driver}"></td>
+												<td th:text="${e.dateModification}"></td>
+												<td class="text-nowrap"><a
+													th:href="@{/parametre-mysql/formupdate(id=${e.id})}"
+													class="btn btn-primary btn-sm"> <i class="fa fa-edit">
+													</i> Modifier
+												</a></td>
+											</tr>
+										</tbody>
+									</table>
 
-									<tbody>
-										<tr th:each="e:${communes}">
-											<td th:text="${e.idCommune}"></td>
-											<td th:text="${e.pays.nom}"></td>
-											<td th:text="${e.nom}"></td>
-											<td><a
-												th:href="@{/commune/formupdate(id=${e.idCommune})}"
-												class="btn btn-primary btn-sm"> <i class="fa fa-edit"> </i>
-													Modifier
-											</a> <a
-												onclick="return confirm('Voulez-vous supprimer cette commune ?')"
-												th:href="@{/commune/delete(id=${e.idCommune})}"
-												class="btn btn-danger btn-sm"> <i class="fa fa-trash"> </i>
-													Supprimer
-											</a></td>
-										</tr>
-									</tbody>
-								</table>
+								</div>
 							</div>
 							<!-- /.card-body -->
 						</div>

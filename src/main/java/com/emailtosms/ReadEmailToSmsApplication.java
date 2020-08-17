@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@EnableScheduling
+// @EnableScheduling
 @SpringBootApplication
 public class ReadEmailToSmsApplication {
 

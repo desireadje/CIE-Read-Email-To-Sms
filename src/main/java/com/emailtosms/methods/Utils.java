@@ -2,6 +2,8 @@ package com.emailtosms.methods;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -57,6 +59,19 @@ public class Utils {
 			}
 		}
 		return date;
+	}
+
+	public static void getLocalDateTime() {
+
+		// Java 8
+		System.out.println(LocalDateTime.now().getYear());	// 2015
+		System.out.println(LocalDateTime.now().getMonth());	// SEPTEMBER
+		System.out.println(LocalDateTime.now().getDayOfMonth());	// 29
+		System.out.println(LocalDateTime.now().getHour());	// 7
+		System.out.println(LocalDateTime.now().getMinute());	// 36
+		System.out.println(LocalDateTime.now().getSecond());	// 51
+		System.out.println(LocalDateTime.now().get(ChronoField.MILLI_OF_SECOND));	// 100
+
 	}
 
 }

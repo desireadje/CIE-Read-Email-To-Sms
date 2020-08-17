@@ -22,7 +22,7 @@ public class ParametreApiController {
 	@GetMapping()
 	public String page(Model model, HttpSession session) {
 		// je recherche les tickets par ordre decroissant
-		model.addAttribute("ListApi", apiRepository.findParamApi());	
+		model.addAttribute("ListApi", apiRepository.findParamApi());
 		return "api/index";
 	}
 
