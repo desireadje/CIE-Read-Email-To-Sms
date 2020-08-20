@@ -17,6 +17,7 @@ import com.emailtosms.entities.Mail;
 import com.emailtosms.entities.ParametreApi;
 import com.emailtosms.entities.ParametreMySql;
 import com.emailtosms.http.BulkSmsHttp;
+import com.emailtosms.log.GenereFichierLog;
 import com.emailtosms.methods.Utils;
 import com.emailtosms.repositories.MailRepository;
 import com.emailtosms.repositories.MySqlRepository;
@@ -55,9 +56,12 @@ public class ServiceEmailToSms {
 
 		System.err.println(Utils.dateNow() + " Run readMySqldDataBase");
 
+		// GenereFichierLog fichierLog = new GenereFichierLog();
+		// fichierLog.log();
+
 		// Je recherhce les params de la db distant.
 		ParametreMySql mysql = mySqlRepos.findMysqlParam();
-		
+
 		String dbname, username, password, driver = null;
 
 		if (mysql != null) {
@@ -73,8 +77,8 @@ public class ServiceEmailToSms {
 				Class.forName("com.mysql.jdbc.Driver");
 
 				// 2. Je configure la connexion avec le DB
-				con = DriverManager.getConnection(
-						"jdbc:mysql://localhost/" + dbname + "?" + "user=" + username + "&password=" + password + "");
+				con = DriverManager.getConnection("jdbc:mysql://10.10.130.67:3306/" + dbname + "?" + "user=" + username
+						+ "&password=" + password + "");
 
 				if (con != null) {
 
@@ -209,7 +213,7 @@ public class ServiceEmailToSms {
 	 * 
 	 * @return void
 	 */
-	@Scheduled(fixedDelay = 10000)
+	// @Scheduled(fixedDelay = 10000)
 	public void SendSmsBulkWorker() {
 
 		System.err.println(Utils.dateNow() + " Run SendSmsBulkWorker");

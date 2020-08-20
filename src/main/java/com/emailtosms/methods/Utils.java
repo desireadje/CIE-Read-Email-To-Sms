@@ -47,9 +47,21 @@ public class Utils {
 		return dateNow;
 	}
 
+	public static String dateFormat(String format) {
+
+		String str = null;
+
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+
+		str = sdf.format(date);
+
+		return str;
+	}
+
 	public static Date stringToDate(String str) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
 		Date date = null;
 		if (str != null) {
 			try {
@@ -64,13 +76,13 @@ public class Utils {
 	public static void getLocalDateTime() {
 
 		// Java 8
-		System.out.println(LocalDateTime.now().getYear());	// 2015
-		System.out.println(LocalDateTime.now().getMonth());	// SEPTEMBER
-		System.out.println(LocalDateTime.now().getDayOfMonth());	// 29
-		System.out.println(LocalDateTime.now().getHour());	// 7
-		System.out.println(LocalDateTime.now().getMinute());	// 36
-		System.out.println(LocalDateTime.now().getSecond());	// 51
-		System.out.println(LocalDateTime.now().get(ChronoField.MILLI_OF_SECOND));	// 100
+		System.out.println(LocalDateTime.now().getYear()); // 2015
+		System.out.println(LocalDateTime.now().getMonth()); // SEPTEMBER
+		System.out.println(LocalDateTime.now().getDayOfMonth()); // 29
+		System.out.println(LocalDateTime.now().getHour()); // 7
+		System.out.println(LocalDateTime.now().getMinute()); // 36
+		System.out.println(LocalDateTime.now().getSecond()); // 51
+		System.out.println(LocalDateTime.now().get(ChronoField.MILLI_OF_SECOND)); // 100
 
 	}
 
