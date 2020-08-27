@@ -11,19 +11,25 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+
 import com.emailtosms.entities.Mail;
 import com.emailtosms.entities.ParametreApi;
 import com.emailtosms.entities.ParametreMySql;
-import com.emailtosms.http.BulkSmsHttp;
-import com.emailtosms.log.GenereFichierLog;
-import com.emailtosms.methods.Utils;
 import com.emailtosms.repositories.MailRepository;
 import com.emailtosms.repositories.MySqlRepository;
 import com.emailtosms.repositories.ParametreApiRepository;
 import com.emailtosms.sms.BulkSms;
 import com.emailtosms.sms.Message;
+import com.emailtosms.utils.Methods;
+import com.google.gson.Gson;
+
 import org.apache.commons.codec.digest.DigestUtils;
 
 @Component
@@ -54,19 +60,18 @@ public class ServiceEmailToSms {
 	@Scheduled(fixedDelay = 10000)
 	public void ReadMySqlDatabase() throws Exception {
 
-		System.err.println(Utils.dateNow() + " Run readMySqldDataBase");
-
-		// GenereFichierLog fichierLog = new GenereFichierLog();
-		// fichierLog.log();
+		System.err.println(Methods.dateNow() + " Run readMySqldDataBase...");
 
 		// Je recherhce les params de la db distant.
 		ParametreMySql mysql = mySqlRepos.findMysqlParam();
 
-		String dbname, username, password, driver = null;
+		String host, port, dbname, username, password, driver = null;
 
 		if (mysql != null) {
 
 			// Je declare les paramètres de connexion au SGBD MySql et le nom de la bdd
+			host = mysql.getHost();
+			port = mysql.getPort();
 			dbname = mysql.getDbname();
 			username = mysql.getUsername();
 			password = mysql.getPassword();
@@ -74,11 +79,12 @@ public class ServiceEmailToSms {
 
 			try {
 				// 1. Je charge le profile de pilote MySQL
-				Class.forName("com.mysql.jdbc.Driver");
+				// Class.forName("com.mysql.jdbc.Driver");
+				Class.forName(driver);
 
 				// 2. Je configure la connexion avec le DB
-				con = DriverManager.getConnection("jdbc:mysql://10.10.130.67:3306/" + dbname + "?" + "user=" + username
-						+ "&password=" + password + "");
+				con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + dbname + "?" + "user="
+						+ username + "&password=" + password + "");
 
 				if (con != null) {
 
@@ -97,7 +103,7 @@ public class ServiceEmailToSms {
 					// ResultSet est initialement avant le premier ensemble de données
 
 					if (!resultSet.next()) { // if resultSet.next() retourne false
-						System.err.println(Utils.dateNow() + " Aucun mail récupéré");
+						System.err.println(Methods.dateNow() + " Aucun mail récupéré");
 					} else {
 						do {
 							String line = null;
@@ -124,7 +130,7 @@ public class ServiceEmailToSms {
 							// foramatge du code du sms de la ligne
 							line = idmail + identifiant + date_send + date_recup + sujet + fromm + too + cc + bcc + text
 									+ paraid + nom + prenoms + numero;
-							String code = DigestUtils.md5Hex(Utils.dateNow() + line);
+							String code = DigestUtils.md5Hex(Methods.dateNow() + line);
 
 							// 14. Je vérifie si l'identifiant du mail n'est pas déja enregistré.
 							Mail mail = null;
@@ -134,6 +140,7 @@ public class ServiceEmailToSms {
 								Mail m = new Mail();
 
 								m.setCode(code);
+								m.setIdmail(String.valueOf(idmail));
 								m.setIdentifiant(identifiant);
 
 								m.setDate_send(date_send);
@@ -167,11 +174,11 @@ public class ServiceEmailToSms {
 
 								int rowsUpdated = preparedStatement.executeUpdate();
 								if (rowsUpdated > 0) {
-									System.err.println(Utils.dateNow() + " Un mail id " + idmail
+									System.err.println(Methods.dateNow() + " Un mail id " + idmail
 											+ " existant a été mis à jour avec succès !");
 								}
 							} else {
-								System.err.println(Utils.dateNow() + " Ce mail est déja enregistré");
+								System.err.println(Methods.dateNow() + " Ce mail est déja enregistré");
 							}
 						} while (resultSet.next());
 					}
@@ -182,7 +189,7 @@ public class ServiceEmailToSms {
 				close();
 			}
 		} else {
-			System.err.println(Utils.dateNow() + " La base de données distant n'est pas configuré.");
+			System.err.println(Methods.dateNow() + " La base de données distant n'est pas configuré.");
 		}
 
 	}
@@ -213,35 +220,36 @@ public class ServiceEmailToSms {
 	 * 
 	 * @return void
 	 */
-	// @Scheduled(fixedDelay = 10000)
+	@Scheduled(fixedDelay = 10000)
 	public void SendSmsBulkWorker() {
 
-		System.err.println(Utils.dateNow() + " Run SendSmsBulkWorker");
-
+		System.err.println(Methods.dateNow() + " Run SendSmsBulkWorker...");
 		// http://10.10.130.76:8080/api/addOneSms?Username=justine&Token=$2a$10$bbqS7kicnAPCFkjbCSPN1OGOhMxavdsMOnRPir7Q39vQeu4msF5y6&Dest=22584046064&Sms=ok&Flash=0&Sender=CIE&Titre=TESTER;
 
 		// 1. Je recherche les paramètres de l'api.
 		ParametreApi api = null;
 		api = apiRepos.findParamApi();
-		System.err.println(api);
 
 		if (api != null) {
 
 			// 2. Je crée une instance de BulkSms().
 			BulkSms bulkSms = new BulkSms();
 
-			// 3. J'initialise les paramètres de l'instance de BulkSms().
-			String username, token, sender, flash, title, url = null;
-
 			// 3. Je récupère les paramètres de l'api.
-			username = api.getUsername();
-			token = api.getToken();
-			sender = api.getSender();
-			flash = api.getFlash();
-			title = api.getTitle();
+			String username = api.getUsername();
+			String token = api.getToken();
+			String sender = api.getSender();
+			String flash = api.getFlash();
+			String title = api.getTitle();
 
-			// String url = "http://10.10.130.76:8080/api";
-			url = api.getUrl();
+			/*
+			 * username = "emailtosms"; token =
+			 * "$2a$10$wVX0XZKOqwhMykABqF7KkOz4mNeQxrusl8xdphdjdKS3ZBIoRjIVC"; sender =
+			 * "CIE"; flash = "0"; title = "TESTER";
+			 */
+
+			// url = "http://10.10.130.76:8080/api";
+			String url = api.getUrl();
 
 			// 4. J'attribut le username, token, title et url de l'objet BulkSms().
 			bulkSms.setUsername(username);
@@ -265,13 +273,10 @@ public class ServiceEmailToSms {
 					// 10. Je crée une instance de Message().
 					Message message = new Message();
 
-					// 11. J'initialise les variables du message.
-					String sms = null;
-					String dest = null;
-
+				
 					// 12. Je recheche le modèle de SMS approprié au type de ticket.
-					sms = mail.getText();
-					dest = mail.getNumero();
+					String sms = mail.getText();
+					String dest = mail.getNumero();
 
 					// Si le numéro eexiste alors...
 					if (dest != null) {
@@ -279,7 +284,6 @@ public class ServiceEmailToSms {
 						// 13. Je charge les attribut de l'objet message.
 						message.setDest(dest);
 						message.setSms(sms);
-
 						message.setFlash(flash);
 						message.setSender(sender);
 
@@ -287,19 +291,46 @@ public class ServiceEmailToSms {
 					}
 				}
 
-				// 14. Je charge Mssg de l'objet BulkSms.
-				bulkSms.setMssg(messageString);
+				// Je verifie que le corps de SMS n'est pas vide alors.
+				if (messageString != null) {
 
-				// 15. J'envoi les sms via une requète http
-				if (BulkSmsHttp.main(bulkSms, url)) {
-					// 16. Je mets a jour les mail (Etat = 1) notifiés
-					updateBulkSms(mails);
+					// 14. Je charge Mssg de l'objet BulkSms.
+					bulkSms.setMssg(messageString);
+
+					// 15. Je crée une instance de Gson().
+					Gson gson = new Gson();
+
+					// 16. Je crée une instance de HttpHeaders().
+					HttpHeaders headers = new HttpHeaders();
+
+					// 17. Je définis le header (en-tête) pour retouner du JSON.
+					headers.setContentType(MediaType.APPLICATION_JSON);
+
+					// 18. Je crée une instance de RestTemplate().
+					RestTemplate restTemplate = new RestTemplate();
+
+					// 19. J'encode l'objet BulkSms en JSON.
+					HttpEntity<String> entity = new HttpEntity<String>(gson.toJson(bulkSms), headers);
+
+					// 20. J'envoi le sms au destinataire finaux.
+					ResponseEntity<String> response = restTemplate.postForEntity(url + "/addBulkSms", entity,
+							String.class);
+					System.err.println(Methods.dateNow() + " CodeReponse : " + response.getStatusCodeValue());
+
+					// 21. Je vérifie le code de la réponse retrournée.
+					if (response.getStatusCodeValue() == 200) {
+						// 22. Je mets a jour les mail (Etat = 1) notifiés
+						updateBulkSms(mails);
+					} else {
+						System.err.println(
+								Methods.dateNow() + " Erreur lors de l'envoi des SMS, veuillez réessayer à nouveau.");
+					}
 				}
 			} else {
-				System.err.println(Utils.dateNow() + " Aucun mail reçu disponible.");
+				System.err.println(Methods.dateNow() + " Aucun mail reçu disponible.");
 			}
 		} else {
-			System.err.println(Utils.dateNow() + " Aucun paramètre Api disponible.");
+			System.err.println(Methods.dateNow() + " Aucun paramètre Api disponible.");
 		}
 	}
 
@@ -319,9 +350,9 @@ public class ServiceEmailToSms {
 
 				mailRepos.save(m);
 			}
-			System.err.println(Utils.dateNow() + " Tous les mails ont été notifié et mis à jour.");
+			System.err.println(Methods.dateNow() + " Tous les mails ont été notifié et mis à jour.");
 		} else {
-			System.err.println(Utils.dateNow() + " La liste des mails est vide pour la mise à jour.");
+			System.err.println(Methods.dateNow() + " La liste des mails est vide pour la mise à jour.");
 		}
 	}
 

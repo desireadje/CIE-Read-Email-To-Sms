@@ -72,7 +72,24 @@
 													<input type="hidden" th:field="*{id}" class="form-control" />
 
 													<div class="row">
+
 														<div class="col-md-6">
+															<!-- host -->
+															<div class="form-group">
+																<label for="dbname">Host</label> <input type="text"
+																	th:field="*{host}" placeholder="Host"
+																	required="true" class="form-control" id="host" /> <span
+																	class="text-danger" th:errors="*{host}"></span>
+															</div>
+
+															<!-- port -->
+															<div class="form-group">
+																<label for="driver">Port</label> <input type="text"
+																	th:field="*{port}" placeholder="Port"
+																	class="form-control" id="port" /> <span
+																	class="text-danger" th:errors="*{port}"></span>
+															</div>
+															
 															<!-- dbname -->
 															<div class="form-group">
 																<label for="dbname">Base de donn&eacute;es</label> <input
@@ -82,22 +99,13 @@
 																	class="text-danger" th:errors="*{dbname}"></span>
 															</div>
 
-															<!-- driver -->
-															<div class="form-group">
-																<label for="driver">Driver</label> <input type="text"
-																	th:field="*{driver}" placeholder="Driver"
-																	class="form-control" id="driver" /> <span
-																	class="text-danger" th:errors="*{driver}"></span>
-															</div>
-
 														</div>
 
 
 
-
 														<div class="col-md-6">
-
-															<!-- username -->
+														
+														<!-- username -->
 															<div class="form-group">
 																<label for="username">Username</label> <input
 																	type="text" th:field="*{username}" placeholder="Driver"
@@ -113,7 +121,20 @@
 																	id="password" /> <span class="text-danger"
 																	th:errors="*{password}"></span>
 															</div>
+															
+
+															<!-- driver -->
+															<div class="form-group">
+																<label for="driver">Driver</label> <input type="text"
+																	th:field="*{driver}" placeholder="Driver"
+																	class="form-control" id="driver" /> <span
+																	class="text-danger" th:errors="*{driver}"></span>
+															</div>
+
 														</div>
+
+
+
 													</div>
 
 												</div>

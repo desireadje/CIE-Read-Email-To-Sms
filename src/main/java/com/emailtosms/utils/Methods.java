@@ -1,4 +1,4 @@
-package com.emailtosms.methods;
+package com.emailtosms.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -7,7 +7,7 @@ import java.time.temporal.ChronoField;
 import java.util.Calendar;
 import java.util.Date;
 
-public class Utils {
+public class Methods {
 
 	// Augmenter une date jour par jour
 	public static Date addDays(Date date, int days) {

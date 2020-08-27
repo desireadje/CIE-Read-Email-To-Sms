@@ -61,6 +61,8 @@
 									<table id="example1" class="table table-bordered table-striped">
 										<thead>
 											<tr class="text-nowrap">
+												<th>Host</th>
+												<th>Port</th>
 												<th>Base de donn&eacute;es</th>
 												<th>Username</th>
 												<th>Mot de passe</th>
@@ -72,6 +74,8 @@
 
 										<tbody>
 											<tr th:each="e:${Mysql}">
+												<td class="text-nowrap" th:text="${e.host}"></td>
+												<td th:text="${e.port}"></td>
 												<td class="text-nowrap" th:text="${e.dbname}"></td>
 												<td th:text="${e.username}"></td>
 												<td th:text="${e.password}"></td>

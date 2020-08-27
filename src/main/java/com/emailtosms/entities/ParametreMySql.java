@@ -25,6 +25,8 @@ public class ParametreMySql implements Serializable {
 	private String dbname;
 	private String username;
 	private String password;
+	private String host;
+	private String port;
 
 	private String driver;
 
@@ -38,12 +40,14 @@ public class ParametreMySql implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ParametreMySql(String dbname, String username, String password, String driver, Date dateModification,
-			int etat) {
+	public ParametreMySql(String dbname, String username, String password, String host, String port, String driver,
+			Date dateModification, int etat) {
 		super();
 		this.dbname = dbname;
 		this.username = username;
 		this.password = password;
+		this.host = host;
+		this.port = port;
 		this.driver = driver;
 		this.dateModification = dateModification;
 		this.etat = etat;
@@ -79,6 +83,22 @@ public class ParametreMySql implements Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public String getPort() {
+		return port;
+	}
+
+	public void setPort(String port) {
+		this.port = port;
 	}
 
 	public String getDriver() {

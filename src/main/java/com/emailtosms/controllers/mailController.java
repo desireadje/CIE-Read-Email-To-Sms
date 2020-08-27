@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.emailtosms.repositories.MailRepository;
 
 @Controller
-@CrossOrigin("*")
 @RequestMapping(value = "/")
-public class mailController {
+public class MailController {
 
 	@Autowired
 	private MailRepository mailRepos;

@@ -18,7 +18,6 @@ import com.emailtosms.entities.ParametreApi;
 import com.emailtosms.repositories.ParametreApiRepository;
 
 @Controller
-@CrossOrigin("*")
 @RequestMapping(value = "/parametre-api")
 public class ParametreApiController {
 
