@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.emailtosms.config.FormatNumero;
-import com.emailtosms.config.ResponseFindSocieteExpediteur;
 import com.emailtosms.config.Utils;
 import com.emailtosms.entities.BulkSms;
 import com.emailtosms.entities.Mail;
