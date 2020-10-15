@@ -1,4 +1,4 @@
-package com.emailtosms.sms;
+package com.emailtosms.entities;
 
 import java.util.ArrayList;
 

@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name = "parametremysql")
+@Table(name = "emailToSmsParametreMysql")
 public class ParametreMySql implements Serializable {
 
 	private static final long serialVersionUID = 1L;

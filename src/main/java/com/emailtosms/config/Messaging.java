@@ -1,4 +1,4 @@
-package com.emailtosms.utils;
+package com.emailtosms.config;
 
 import java.io.IOException;
 import java.util.Date;
@@ -57,7 +57,7 @@ public class Messaging {
 
 		contentType = msg.getContentType();
 
-		System.err.println(Methods.dateNow() + contentType);
+		System.err.println(Utils.dateNow() + contentType);
 
 		if (contentType.startsWith("multipart/") || contentType.contains("text/plain")
 				|| contentType.contains("text/html")) {

@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name = "mail")
+@Table(name = "emailToSmsMail")
 public class Mail implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -56,13 +56,18 @@ public class Mail implements Serializable {
 	@Column(columnDefinition = "TEXT")
 	private String html;
 
-	private int etat = 0;
 	private int paraid;
 
+	private int etat = 0;
 	@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
 	private Date dateCreation;
 	@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
 	private Date dateModification;
+
+	private String applicationEmailToSms;
+	private String username;
+	private String token;
+	private String sender;
 
 	// constructeur sans params
 	public Mail() {
@@ -71,11 +76,12 @@ public class Mail implements Serializable {
 	}
 
 	// constructeur avec params
-	public Mail(String code, String idmail, String identifiant, Date date_send, Date date_recup, Date date_insertion,
-			String sujet, String fromm, String too, String nom, String numero, String service,
-			String cc, String bcc, String text, String html, int etat, int paraid, Date dateCreation,
-			Date dateModification) {
+	public Mail(Long id, String code, String idmail, String identifiant, Date date_send, Date date_recup,
+			Date date_insertion, String sujet, String fromm, String too, String nom, String numero, String service,
+			String cc, String bcc, String text, String html, int paraid, int etat, Date dateCreation,
+			Date dateModification, String applicationEmailToSms, String username, String token, String sender) {
 		super();
+		this.id = id;
 		this.code = code;
 		this.idmail = idmail;
 		this.identifiant = identifiant;
@@ -92,10 +98,14 @@ public class Mail implements Serializable {
 		this.bcc = bcc;
 		this.text = text;
 		this.html = html;
-		this.etat = etat;
 		this.paraid = paraid;
+		this.etat = etat;
 		this.dateCreation = dateCreation;
 		this.dateModification = dateModification;
+		this.applicationEmailToSms = applicationEmailToSms;
+		this.username = username;
+		this.token = token;
+		this.sender = sender;
 	}
 
 	public Long getId() {
@@ -106,16 +116,16 @@ public class Mail implements Serializable {
 		this.id = id;
 	}
 
-	public String getIdmail() {
-		return idmail;
+	public String getCode() {
+		return code;
 	}
 
 	public void setCode(String code) {
 		this.code = code;
 	}
 
-	public String getCode() {
-		return code;
+	public String getIdmail() {
+		return idmail;
 	}
 
 	public void setIdmail(String idmail) {
@@ -234,20 +244,20 @@ public class Mail implements Serializable {
 		this.html = html;
 	}
 
-	public int getEtat() {
-		return etat;
-	}
-
-	public void setEtat(int etat) {
-		this.etat = etat;
-	}
-
 	public int getParaid() {
 		return paraid;
 	}
 
 	public void setParaid(int paraid) {
 		this.paraid = paraid;
+	}
+
+	public int getEtat() {
+		return etat;
+	}
+
+	public void setEtat(int etat) {
+		this.etat = etat;
 	}
 
 	public Date getDateCreation() {
@@ -264,6 +274,38 @@ public class Mail implements Serializable {
 
 	public void setDateModification(Date dateModification) {
 		this.dateModification = dateModification;
+	}
+
+	public String getApplicationEmailToSms() {
+		return applicationEmailToSms;
+	}
+
+	public void setApplicationEmailToSms(String applicationEmailToSms) {
+		this.applicationEmailToSms = applicationEmailToSms;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public String getSender() {
+		return sender;
+	}
+
+	public void setSender(String sender) {
+		this.sender = sender;
 	}
 
 	public static long getSerialversionuid() {

@@ -14,7 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.sun.istack.NotNull;
 
 @Entity
-@Table(name = "utilisateur")
+@Table(name = "emailToSmsMailUtilisateur")
 public class Utilisateur implements Serializable {
 
 	private static final long serialVersionUID = 1L;

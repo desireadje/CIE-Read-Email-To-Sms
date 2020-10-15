@@ -1,4 +1,4 @@
-package com.emailtosms.sms;
+package com.emailtosms.entities;
 
 public class Message {
 

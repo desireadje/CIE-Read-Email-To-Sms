@@ -19,15 +19,16 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import com.emailtosms.config.FormatNumero;
+import com.emailtosms.config.ResponseFindSocieteExpediteur;
+import com.emailtosms.config.Utils;
+import com.emailtosms.entities.BulkSms;
 import com.emailtosms.entities.Mail;
-import com.emailtosms.entities.ParametreApi;
+import com.emailtosms.entities.Message;
 import com.emailtosms.entities.ParametreMySql;
+import com.emailtosms.entities.ResponseFormatNumber;
 import com.emailtosms.repositories.MailRepository;
 import com.emailtosms.repositories.MySqlRepository;
-import com.emailtosms.repositories.ParametreApiRepository;
-import com.emailtosms.sms.BulkSms;
-import com.emailtosms.sms.Message;
-import com.emailtosms.utils.Methods;
 import com.google.gson.Gson;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -39,37 +40,42 @@ public class ServiceEmailToSms {
 	private MailRepository mailRepos;
 
 	@Autowired
-	private ParametreApiRepository apiRepos;
-
-	@Autowired
 	private MySqlRepository mySqlRepos;
 
-	private Connection con = null;
+	private Connection connection = null;
 	private Statement statement = null;
 	private PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
 
-	/**
+	/*
 	 * Cette tache a pour role de se connecter a la base de données MySql easy via
 	 * une connexion JSBC pour récupérer les Mail et les Numuro du personnel
-	 * 
-	 * @param dbname
-	 * @param user
-	 * @param password
 	 */
 	@Scheduled(fixedDelay = 10000)
-	public void ReadMySqlDatabase() throws Exception {
+	public void ReadMySqlDatabaseJDBC() throws Exception {
 
-		System.err.println(Methods.dateNow() + " Run readMySqldDataBase...");
+		// Je ferme les connexions.
+		close();
 
-		// Je recherhce les params de la db distant.
+		// Je déclare les variables locals.
+		String host = null;
+		String port = null;
+		String dbname = null;
+		String username = null;
+		String password = null;
+		String driver = null;
+
+		System.out.println(Utils.dateNow() + " Run ReadMySqlDatabaseJDBC...");
+
+		// Je recherhce les paramètres de la base de données MySQL.
 		ParametreMySql mysql = mySqlRepos.findMysqlParam();
-
-		String host, port, dbname, username, password, driver = null;
 
 		if (mysql != null) {
 
-			// Je declare les paramètres de connexion au SGBD MySql et le nom de la bdd
+			/*
+			 * Je récupère les paramètres de connexion au SGBD MySql et le nom de la base de
+			 * données MySQL.
+			 */
 			host = mysql.getHost();
 			port = mysql.getPort();
 			dbname = mysql.getDbname();
@@ -78,107 +84,146 @@ public class ServiceEmailToSms {
 			driver = mysql.getDriver();
 
 			try {
-				// 1. Je charge le profile de pilote MySQL
-				// Class.forName("com.mysql.jdbc.Driver");
+				// Je charge le profile de pilote MySQL.
 				Class.forName(driver);
 
-				// 2. Je configure la connexion avec le DB
-				con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + dbname + "?" + "user="
-						+ username + "&password=" + password + "");
+				// Je configure la connexion avec le DB.
+				connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + dbname + "?"
+						+ "user=" + username + "&password=" + password + "");
 
-				if (con != null) {
+				if (connection != null) {
 
-					// 3. Je prepare 'statement' l'excuteur des requêtes SQL vers la base de données
-					statement = con.createStatement();
+					// Je prepare 'statement' l'excuteur des requêtes SQL vers la DB MySQL.
+					statement = connection.createStatement();
 
-					// 4. J'implemente le script de la vue récupérant les mails pas encore recupérés
+					// J'implemente le script de la vue récupérant les mails pas encore recupérés
 					String selectQuery = "SELECT `mail`.`idmail` AS `idmail`,`mail`.`identifiant` AS `identifiant`,`mail`.`date_send` AS `date_send`,`mail`.`date_recup` AS `date_recup`,`mail`.`sujet` AS `sujet`,`mail`.`fromm` AS `fromm`,`mail`.`cc` AS `cc`,`mail`.`bcc` AS `bcc`,`mail`.`text` AS `text`,`mail`.`html` AS `html`,`mail`.`etat` AS `etat`,`mail`.`paraid` AS `paraid`,`personnel`.`nom` AS `nom`,`personnel`.`prenoms` AS `prenoms`,`personnel`.`numero` AS `numero`,`personnel`.`service` AS `service`"
 							+ "from (`personnel` join `mail` on((`personnel`.`service` = `mail`.`too`)))"
 							+ "where (`mail`.`etat` = 0)";
 
-					// 4. Je récupère le résultat de la requête SQL (resultSet)
+					// Je récupère le résultat de la requête SQL (resultSet)
 					resultSet = statement.executeQuery(selectQuery);
 
-					// 5. J'effectue la traitement des données récupérées
-					// ResultSet est initialement avant le premier ensemble de données
-
+					// J'effectue la traitement des données récupérées
 					if (!resultSet.next()) { // if resultSet.next() retourne false
-						System.err.println(Methods.dateNow() + " Aucun mail récupéré");
+						System.out.println(Utils.dateNow() + " Aucun mail récupéré");
 					} else {
 						do {
-							String line = null;
-
-							int idmail = resultSet.getInt("idmail");
-							String identifiant = resultSet.getString("identifiant");
-
-							Date date_send = resultSet.getDate("date_send");
-							Date date_recup = resultSet.getDate("date_recup");
-
-							String sujet = resultSet.getString("sujet");
+							// Je recupère l'expéditeur du mail a débité.
 							String fromm = resultSet.getString("fromm");
-							String too = resultSet.getString("service");
-							String cc = resultSet.getString("cc");
-							String bcc = resultSet.getString("bcc");
-							String text = resultSet.getString("text");
-							String html = resultSet.getString("html");
-							int paraid = resultSet.getInt("paraid");
-
-							String nom = resultSet.getString("nom");
-							String prenoms = resultSet.getString("prenoms");
+							int idmail = resultSet.getInt("idmail");
 							String numero = resultSet.getString("numero");
 
-							// foramatge du code du sms de la ligne
-							line = idmail + identifiant + date_send + date_recup + sujet + fromm + too + cc + bcc + text
-									+ paraid + nom + prenoms + numero;
-							String code = DigestUtils.md5Hex(Methods.dateNow() + line);
+							/*
+							 * J'effectue un traitement sur le mail de l'expediteur (récuperer le nom de la
+							 * societé).
+							 */
+							String societe = Utils.findSocieteExpediteur(fromm);
 
-							// 14. Je vérifie si l'identifiant du mail n'est pas déja enregistré.
-							Mail mail = null;
-							mail = mailRepos.findMailByIdentitifiant(code);
+							/*
+							 * Je format le numero du destinataire ayant reçu l'appel (donnée récupérée du
+							 * champ 'destinataire')
+							 */
+							ResponseFormatNumber rfn = FormatNumero.number_F(numero);
 
-							if (mail == null) {
-								Mail m = new Mail();
+							// Si la societé est bien récupérée et que le numero est bien formaté alors...
+							if (societe != null && rfn.isResponse()) {
 
-								m.setCode(code);
-								m.setIdmail(String.valueOf(idmail));
-								m.setIdentifiant(identifiant);
+								/*
+								 * Je recherche une societe ayant une groupe d'envoi affilié a une application
+								 * (utilisateur) ayant pour role exceptionnel 'EmailToSms'. OBJECTIF : récupérer
+								 * l'identifiant du groupe d'envoi
+								 */
+								List<Object[]> objects = mailRepos.findIdGroupeEnvoi(societe);
 
-								m.setDate_send(date_send);
-								m.setDate_recup(date_recup);
+								if (objects.size() != 0) {
 
-								m.setSujet(sujet);
-								m.setFromm(fromm);
-								m.setToo(too);
-								m.setCc(cc);
-								m.setBcc(bcc);
-								m.setText(text);
-								m.setHtml(html);
+									/* Je recupère les information de l'application */
+									String applicationEmailToSms = null;
+									String username1 = null;
+									String token = null;
+									String sender = null;
 
-								m.setEtat(0);
-								m.setParaid(paraid);
+									for (Object[] object : objects) {
+										applicationEmailToSms = object[0].toString();
+										username1 = object[1].toString();
+										token = object[2].toString();
+										sender = object[3].toString();
+									}
 
-								m.setNom(nom + " " + prenoms);
-								m.setNumero("225" + numero);
+									String line = null;
 
-								m.setDateCreation(new Date());
-								m.setDateModification(new Date());
+									// Je parcours le résultat de l'exécution pour recupérer les autres données.
+									String identifiant = resultSet.getString("identifiant");
+									Date date_send = resultSet.getDate("date_send");
+									Date date_recup = resultSet.getDate("date_recup");
+									String sujet = resultSet.getString("sujet");
+									String too = resultSet.getString("service");
+									String cc = resultSet.getString("cc");
+									String bcc = resultSet.getString("bcc");
+									String text = resultSet.getString("text");
+									String html = resultSet.getString("html");
+									int paraid = resultSet.getInt("paraid");
 
-								m = mailRepos.save(m);
+									String nom = resultSet.getString("nom");
+									String prenoms = resultSet.getString("prenoms");
 
-								// mise a jour du mail dans la base de données MySql
-								String updateQuery = "UPDATE Mail SET etat=? WHERE idmail=?";
+									// Je foramat une reference de mail pour la ligne.
+									line = idmail + identifiant + date_send + date_recup + sujet + fromm + too + cc
+											+ bcc + text + paraid + nom + prenoms + numero;
 
-								preparedStatement = con.prepareStatement(updateQuery);
-								preparedStatement.setInt(1, 1);
-								preparedStatement.setInt(2, idmail);
+									String date_format = Utils.dateFormat("yyyyMMdd");
+									String code = DigestUtils.md5Hex(date_format + line);
 
-								int rowsUpdated = preparedStatement.executeUpdate();
-								if (rowsUpdated > 0) {
-									System.err.println(Methods.dateNow() + " Un mail id " + idmail
-											+ " existant a été mis à jour avec succès !");
+									// 14. Je vérifie si l'identifiant du mail n'est pas déja enregistré.
+									Mail mail = null;
+									mail = mailRepos.findMailByIdentitifiant(code);
+
+									if (mail == null) {
+
+										Mail m = new Mail();
+
+										m.setApplicationEmailToSms(applicationEmailToSms);
+										m.setUsername(username1);
+										m.setToken(token);
+										m.setSender(sender);
+
+										m.setCode(code);
+										m.setIdmail(String.valueOf(idmail));
+										m.setIdentifiant(identifiant);
+
+										m.setDate_send(date_send);
+										m.setDate_recup(date_recup);
+
+										m.setSujet(sujet);
+										m.setFromm(fromm);
+										m.setToo(too);
+										m.setCc(cc);
+										m.setBcc(bcc);
+										m.setText(text);
+										m.setHtml(html);
+
+										m.setEtat(0);
+										m.setParaid(paraid);
+
+										m.setNom(nom + " " + prenoms);
+										m.setNumero(rfn.getNumero());
+
+										m.setDateCreation(new Date());
+										m.setDateModification(new Date());
+
+										m = mailRepos.save(m);
+
+										updateMail(connection, 1, idmail); // mise a jour du mail dans la DB MySQL
+									} else {
+										updateMail(connection, 1, idmail); // mise a jour du mail dans la DB MySQL
+									}
+								} else {
+									updateMail(connection, 1, idmail);
 								}
 							} else {
-								System.err.println(Methods.dateNow() + " Ce mail est déja enregistré");
+								// Je met a jour le mail dans Mysql. mail expéditeur incorrect.
+								updateMail(connection, 1, idmail);
 							}
 						} while (resultSet.next());
 					}
@@ -186,19 +231,136 @@ public class ServiceEmailToSms {
 			} catch (Exception e) {
 				throw e;
 			} finally {
+				// Je ferme les connexions.
 				close();
 			}
-		} else {
-			System.err.println(Methods.dateNow() + " La base de données distant n'est pas configuré.");
 		}
-
 	}
 
-	// Cette fonction permet de fermer toutes les instances
+	/* Cette tache sendBulkSms permet d'envoyer les SMS via l'api par la method */
+	@Scheduled(fixedDelay = 5000)
+	public void SendBulkSms() {
+
+		System.out.println(Utils.dateNow() + " Run SendBulkSms...");
+
+		// Je déclare les variables locals.
+		List<Mail> mails = null;
+		List<Object[]> api = null;
+		String username = null;
+		String token = null;
+		String sender = null;
+		String title = null;
+
+		String url = null;
+		String flash = null;
+
+		// Je récupère les mails a envoyé.
+		mails = mailRepos.findAllMailOftoDayForSendSms();
+
+		// Si la liste des mails n'est pas vide alors...
+		if (mails != null) {
+
+			// Je recupère le params Api.
+			api = mailRepos.findOneParametreApi();
+
+			// Si le parametre API n'est pas null alors...
+			if (api != null) {
+
+				// Je recupère l'url et flash dans l'api
+				for (Object[] objects : api) {
+					url = objects[0].toString();
+					flash = objects[1].toString();
+				}
+
+				// Je parcours la liste des mails
+				for (Mail mail : mails) {
+
+					username = mail.getUsername();
+					token = mail.getToken();
+					sender = mail.getSender();
+					title = mail.getApplicationEmailToSms();
+
+					// Je crée une instance de ArrayList<Message>.
+					ArrayList<Message> messageString = new ArrayList<Message>();
+
+					// Je crée une instance de Message().
+					Message message = new Message();
+
+					// Je charge les attributs de l'objet message.
+					message.setDest(mail.getNumero());
+					message.setSms(mail.getText());
+					message.setFlash(flash);
+					message.setSender(sender);
+
+					messageString.add(message);
+
+					if (messageString != null) {
+
+						// Je crée une instance de BulkSms().
+						BulkSms bulkSms = new BulkSms();
+
+						// J'attribut le username, le token et le titre de l'objet BulkSms().
+						bulkSms.setUsername(username);
+						bulkSms.setToken(token);
+						bulkSms.setTitle(title);
+
+						// Je charge Mssg de l'objet BulkSms.
+						bulkSms.setMssg(messageString);
+
+						// Je crée une instance de Gson().
+						Gson gson = new Gson();
+
+						// Je crée une instance de HttpHeaders().
+						HttpHeaders headers = new HttpHeaders();
+
+						// Je définis le header (en-tête) pour retouner du JSON.
+						headers.setContentType(MediaType.APPLICATION_JSON);
+
+						// Je crée une instance de RestTemplate().
+						RestTemplate restTemplate = new RestTemplate();
+
+						// J'encode bulkSms en JSON.
+						HttpEntity<String> entity = new HttpEntity<String>(gson.toJson(bulkSms), headers);
+
+						// J'envoi le sms au destinataire finaux.
+						ResponseEntity<String> response = restTemplate.postForEntity(url + "/addBulkSms", entity,
+								String.class);
+						System.out.println(
+								Utils.dateNow() + " SendBulkSms CodeReponse : " + response.getStatusCodeValue());
+
+						// Je vérifie le code de la réponse retrournée.
+						if (response.getStatusCodeValue() == 200) {
+							// Je mets a jour les tickets (Etat = 1) notifiés.
+							updateBulkSms(mails);
+						} else {
+							System.out.println(Utils.dateNow() + " Erreur lors de l'envoi des SMS.");
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/* mise a jour du mail dans la base de données MySql */
+	private void updateMail(Connection connection, int statusTraite, int idmail) throws SQLException {
+		// mise a jour du mail dans la base de données MySql
+		String updateQuery = "UPDATE Mail SET etat=? WHERE idmail=?";
+
+		preparedStatement = connection.prepareStatement(updateQuery);
+		preparedStatement.setInt(1, statusTraite);
+		preparedStatement.setInt(2, idmail);
+
+		int rowsUpdated = preparedStatement.executeUpdate();
+		if (rowsUpdated > 0) {
+			System.out.println(Utils.dateNow() + " Un mail id " + idmail + " existant a été mis à jour avec succès !");
+		}
+	}
+
+	/* Cette fonction permet de fermer toutes les instances */
 	private void close() {
 		try {
-			if (con != null && !con.isClosed()) {
-				con.close();
+			if (connection != null && !connection.isClosed()) {
+				connection.close();
 			}
 			if (resultSet != null && !resultSet.isClosed()) {
 				resultSet.close();
@@ -214,133 +376,7 @@ public class ServiceEmailToSms {
 		}
 	}
 
-	/**
-	 * Cette tache sendBulkSms permet d'envoyer les SMS via l'api par la method
-	 * BulkSms (Chaque destiantaire reçoit son contenu de SMS)
-	 * 
-	 * @return void
-	 */
-	@Scheduled(fixedDelay = 10000)
-	public void SendSmsBulkWorker() {
-
-		System.err.println(Methods.dateNow() + " Run SendSmsBulkWorker...");
-		// http://10.10.130.76:8080/api/addOneSms?Username=justine&Token=$2a$10$bbqS7kicnAPCFkjbCSPN1OGOhMxavdsMOnRPir7Q39vQeu4msF5y6&Dest=22584046064&Sms=ok&Flash=0&Sender=CIE&Titre=TESTER;
-
-		// 1. Je recherche les paramètres de l'api.
-		ParametreApi api = null;
-		api = apiRepos.findParamApi();
-
-		if (api != null) {
-
-			// 2. Je crée une instance de BulkSms().
-			BulkSms bulkSms = new BulkSms();
-
-			// 3. Je récupère les paramètres de l'api.
-			String username = api.getUsername();
-			String token = api.getToken();
-			String sender = api.getSender();
-			String flash = api.getFlash();
-			String title = api.getTitle();
-
-			/*
-			 * username = "emailtosms"; token =
-			 * "$2a$10$wVX0XZKOqwhMykABqF7KkOz4mNeQxrusl8xdphdjdKS3ZBIoRjIVC"; sender =
-			 * "CIE"; flash = "0"; title = "TESTER";
-			 */
-
-			// url = "http://10.10.130.76:8080/api";
-			String url = api.getUrl();
-
-			// 4. J'attribut le username, token, title et url de l'objet BulkSms().
-			bulkSms.setUsername(username);
-			bulkSms.setToken(token);
-			bulkSms.setTitle(title);
-
-			// 5. Je crée une instance de ArrayList<Message>.
-			ArrayList<Message> messageString = new ArrayList<Message>();
-
-			// 6. Je récupère la liste des mails.
-			List<Mail> mails = null;
-			mails = mailRepos.findAllMailForSendSms();
-
-			// 8. Je verifie que les tickets (CallMissed) et modele de sms ne sont pas
-			// null.
-			if (mails.size() != 0) {
-
-				// 9. Je parcours la lite de tickets.
-				for (Mail mail : mails) {
-
-					// 10. Je crée une instance de Message().
-					Message message = new Message();
-
-				
-					// 12. Je recheche le modèle de SMS approprié au type de ticket.
-					String sms = mail.getText();
-					String dest = mail.getNumero();
-
-					// Si le numéro eexiste alors...
-					if (dest != null) {
-
-						// 13. Je charge les attribut de l'objet message.
-						message.setDest(dest);
-						message.setSms(sms);
-						message.setFlash(flash);
-						message.setSender(sender);
-
-						messageString.add(message);
-					}
-				}
-
-				// Je verifie que le corps de SMS n'est pas vide alors.
-				if (messageString != null) {
-
-					// 14. Je charge Mssg de l'objet BulkSms.
-					bulkSms.setMssg(messageString);
-
-					// 15. Je crée une instance de Gson().
-					Gson gson = new Gson();
-
-					// 16. Je crée une instance de HttpHeaders().
-					HttpHeaders headers = new HttpHeaders();
-
-					// 17. Je définis le header (en-tête) pour retouner du JSON.
-					headers.setContentType(MediaType.APPLICATION_JSON);
-
-					// 18. Je crée une instance de RestTemplate().
-					RestTemplate restTemplate = new RestTemplate();
-
-					// 19. J'encode l'objet BulkSms en JSON.
-					HttpEntity<String> entity = new HttpEntity<String>(gson.toJson(bulkSms), headers);
-
-					// 20. J'envoi le sms au destinataire finaux.
-					ResponseEntity<String> response = restTemplate.postForEntity(url + "/addBulkSms", entity,
-							String.class);
-					System.err.println(Methods.dateNow() + " CodeReponse : " + response.getStatusCodeValue());
-
-					// 21. Je vérifie le code de la réponse retrournée.
-					if (response.getStatusCodeValue() == 200) {
-						// 22. Je mets a jour les mail (Etat = 1) notifiés
-						updateBulkSms(mails);
-					} else {
-						System.err.println(
-								Methods.dateNow() + " Erreur lors de l'envoi des SMS, veuillez réessayer à nouveau.");
-					}
-				}
-			} else {
-				System.err.println(Methods.dateNow() + " Aucun mail reçu disponible.");
-			}
-		} else {
-			System.err.println(Methods.dateNow() + " Aucun paramètre Api disponible.");
-		}
-	}
-
-	/**
-	 * Cette fonction permet de meettre a jour les tickets traités
-	 * 
-	 * @param List<Mail>
-	 * @return void
-	 * 
-	 */
+	/* Cette fonction permet de meettre a jour les tickets traités */
 	public void updateBulkSms(List<Mail> mail) {
 
 		if (mail != null) {
@@ -350,9 +386,9 @@ public class ServiceEmailToSms {
 
 				mailRepos.save(m);
 			}
-			System.err.println(Methods.dateNow() + " Tous les mails ont été notifié et mis à jour.");
+			System.out.println(Utils.dateNow() + " Tous les mails ont été notifié et mis à jour.");
 		} else {
-			System.err.println(Methods.dateNow() + " La liste des mails est vide pour la mise à jour.");
+			System.out.println(Utils.dateNow() + " La liste des mails est vide pour la mise à jour.");
 		}
 	}
 
