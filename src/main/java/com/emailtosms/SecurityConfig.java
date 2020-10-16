@@ -14,8 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true) // Pour proteger toutes les méthodes (DAO, Metier ...)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	
+public class SecurityConfig extends WebSecurityConfigurerAdapter {	
 
 	@Autowired
 	public void globalConfig(AuthenticationManagerBuilder auth, DataSource dataSource) throws Exception {
@@ -41,5 +40,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.permitAll();
 
 	}
-
 }

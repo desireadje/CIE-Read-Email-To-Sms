@@ -22,9 +22,7 @@ public class Mail implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String code;
-	private String idmail;
-	private String identifiant;
+	private String reference;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date date_send;
@@ -43,18 +41,11 @@ public class Mail implements Serializable {
 	private String too;
 	@Column(columnDefinition = "TEXT")
 
-	private String nom;
+	private String nomPersonnel;
 	private String numero;
-	private String service;
-
-	private String cc;
-	@Column(columnDefinition = "TEXT")
-	private String bcc;
 
 	@Column(columnDefinition = "TEXT")
 	private String text;
-	@Column(columnDefinition = "TEXT")
-	private String html;
 
 	private int paraid;
 
@@ -64,7 +55,7 @@ public class Mail implements Serializable {
 	@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
 	private Date dateModification;
 
-	private String applicationEmailToSms;
+	private String nomApplicationEmailToSms;
 	private String username;
 	private String token;
 	private String sender;
@@ -75,34 +66,25 @@ public class Mail implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
-	// constructeur avec params
-	public Mail(Long id, String code, String idmail, String identifiant, Date date_send, Date date_recup,
-			Date date_insertion, String sujet, String fromm, String too, String nom, String numero, String service,
-			String cc, String bcc, String text, String html, int paraid, int etat, Date dateCreation,
-			Date dateModification, String applicationEmailToSms, String username, String token, String sender) {
+	public Mail(String reference, Date date_send, Date date_recup, Date date_insertion, String sujet, String fromm,
+			String too, String nomPersonnel, String numero, String text, int paraid, int etat, Date dateCreation,
+			Date dateModification, String nomApplicationEmailToSms, String username, String token, String sender) {
 		super();
-		this.id = id;
-		this.code = code;
-		this.idmail = idmail;
-		this.identifiant = identifiant;
+		this.reference = reference;
 		this.date_send = date_send;
 		this.date_recup = date_recup;
 		this.date_insertion = date_insertion;
 		this.sujet = sujet;
 		this.fromm = fromm;
 		this.too = too;
-		this.nom = nom;
+		this.nomPersonnel = nomPersonnel;
 		this.numero = numero;
-		this.service = service;
-		this.cc = cc;
-		this.bcc = bcc;
 		this.text = text;
-		this.html = html;
 		this.paraid = paraid;
 		this.etat = etat;
 		this.dateCreation = dateCreation;
 		this.dateModification = dateModification;
-		this.applicationEmailToSms = applicationEmailToSms;
+		this.nomApplicationEmailToSms = nomApplicationEmailToSms;
 		this.username = username;
 		this.token = token;
 		this.sender = sender;
@@ -116,28 +98,12 @@ public class Mail implements Serializable {
 		this.id = id;
 	}
 
-	public String getCode() {
-		return code;
+	public String getReference() {
+		return reference;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getIdmail() {
-		return idmail;
-	}
-
-	public void setIdmail(String idmail) {
-		this.idmail = idmail;
-	}
-
-	public String getIdentifiant() {
-		return identifiant;
-	}
-
-	public void setIdentifiant(String identifiant) {
-		this.identifiant = identifiant;
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
 
 	public Date getDate_send() {
@@ -188,12 +154,12 @@ public class Mail implements Serializable {
 		this.too = too;
 	}
 
-	public String getNom() {
-		return nom;
+	public String getNomPersonnel() {
+		return nomPersonnel;
 	}
 
-	public void setNom(String nom) {
-		this.nom = nom;
+	public void setNomPersonnel(String nomPersonnel) {
+		this.nomPersonnel = nomPersonnel;
 	}
 
 	public String getNumero() {
@@ -204,44 +170,12 @@ public class Mail implements Serializable {
 		this.numero = numero;
 	}
 
-	public String getService() {
-		return service;
-	}
-
-	public void setService(String service) {
-		this.service = service;
-	}
-
-	public String getCc() {
-		return cc;
-	}
-
-	public void setCc(String cc) {
-		this.cc = cc;
-	}
-
-	public String getBcc() {
-		return bcc;
-	}
-
-	public void setBcc(String bcc) {
-		this.bcc = bcc;
-	}
-
 	public String getText() {
 		return text;
 	}
 
 	public void setText(String text) {
 		this.text = text;
-	}
-
-	public String getHtml() {
-		return html;
-	}
-
-	public void setHtml(String html) {
-		this.html = html;
 	}
 
 	public int getParaid() {
@@ -276,12 +210,12 @@ public class Mail implements Serializable {
 		this.dateModification = dateModification;
 	}
 
-	public String getApplicationEmailToSms() {
-		return applicationEmailToSms;
+	public String getNomApplicationEmailToSms() {
+		return nomApplicationEmailToSms;
 	}
 
-	public void setApplicationEmailToSms(String applicationEmailToSms) {
-		this.applicationEmailToSms = applicationEmailToSms;
+	public void setNomApplicationEmailToSms(String nomApplicationEmailToSms) {
+		this.nomApplicationEmailToSms = nomApplicationEmailToSms;
 	}
 
 	public String getUsername() {

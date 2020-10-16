@@ -53,9 +53,6 @@ public class ServiceEmailToSms {
 	@Scheduled(fixedDelay = 10000)
 	public void ReadMySqlDatabaseJDBC() throws Exception {
 
-		// Je ferme les connexions.
-		close();
-
 		// Je déclare les variables locals.
 		String host = null;
 		String port = null;
@@ -108,9 +105,12 @@ public class ServiceEmailToSms {
 						System.out.println(Utils.dateNow() + " Aucun mail récupéré");
 					} else {
 						do {
-							// Je recupère l'expéditeur du mail a débité.
-							String fromm = resultSet.getString("fromm");
+							/*
+							 * Je recupère l'expéditeur du mail a débité (fromm), l'identifiant du mail
+							 * récupéré, et le numéro du destinataire.
+							 */
 							int idmail = resultSet.getInt("idmail");
+							String fromm = resultSet.getString("fromm");
 							String numero = resultSet.getString("numero");
 
 							/*
@@ -138,13 +138,13 @@ public class ServiceEmailToSms {
 								if (objects.size() != 0) {
 
 									/* Je recupère les information de l'application */
-									String applicationEmailToSms = null;
+									String nomApplicationEmailToSms = null;
 									String username1 = null;
 									String token = null;
 									String sender = null;
 
 									for (Object[] object : objects) {
-										applicationEmailToSms = object[0].toString();
+										nomApplicationEmailToSms = object[0].toString();
 										username1 = object[1].toString();
 										token = object[2].toString();
 										sender = object[3].toString();
@@ -153,16 +153,17 @@ public class ServiceEmailToSms {
 									String line = null;
 
 									// Je parcours le résultat de l'exécution pour recupérer les autres données.
-									String identifiant = resultSet.getString("identifiant");
-									Date date_send = resultSet.getDate("date_send");
-									Date date_recup = resultSet.getDate("date_recup");
+									int paraid = resultSet.getInt("paraid");
+									String text = resultSet.getString("text");
 									String sujet = resultSet.getString("sujet");
 									String too = resultSet.getString("service");
+									Date date_send = resultSet.getDate("date_send");
+									Date date_recup = resultSet.getDate("date_recup");
+									String identifiant = resultSet.getString("identifiant");
+
 									String cc = resultSet.getString("cc");
 									String bcc = resultSet.getString("bcc");
-									String text = resultSet.getString("text");
-									String html = resultSet.getString("html");
-									int paraid = resultSet.getInt("paraid");
+									// String html = resultSet.getString("html");
 
 									String nom = resultSet.getString("nom");
 									String prenoms = resultSet.getString("prenoms");
@@ -171,41 +172,37 @@ public class ServiceEmailToSms {
 									line = idmail + identifiant + date_send + date_recup + sujet + fromm + too + cc
 											+ bcc + text + paraid + nom + prenoms + numero;
 
-									String date_format = Utils.dateFormat("yyyyMMdd");
-									String code = DigestUtils.md5Hex(date_format + line);
+									String reference = DigestUtils.md5Hex(Utils.dateFormat("yyyyMMdd") + line);
 
 									// 14. Je vérifie si l'identifiant du mail n'est pas déja enregistré.
 									Mail mail = null;
-									mail = mailRepos.findMailByIdentitifiant(code);
+									mail = mailRepos.findMailByIdentitifiant(reference);
 
 									if (mail == null) {
 
 										Mail m = new Mail();
 
-										m.setApplicationEmailToSms(applicationEmailToSms);
+										/*
+										 * J'attribue le nom de l'application qui fera office de titre, le username, le
+										 * token et le sender.
+										 */
+										m.setNomApplicationEmailToSms(nomApplicationEmailToSms);
 										m.setUsername(username1);
 										m.setToken(token);
 										m.setSender(sender);
 
-										m.setCode(code);
-										m.setIdmail(String.valueOf(idmail));
-										m.setIdentifiant(identifiant);
-
+										m.setReference(reference);
 										m.setDate_send(date_send);
 										m.setDate_recup(date_recup);
-
 										m.setSujet(sujet);
 										m.setFromm(fromm);
 										m.setToo(too);
-										m.setCc(cc);
-										m.setBcc(bcc);
 										m.setText(text);
-										m.setHtml(html);
 
 										m.setEtat(0);
 										m.setParaid(paraid);
 
-										m.setNom(nom + " " + prenoms);
+										m.setNomPersonnel(nom + " " + prenoms);
 										m.setNumero(rfn.getNumero());
 
 										m.setDateCreation(new Date());
@@ -253,31 +250,32 @@ public class ServiceEmailToSms {
 		String url = null;
 		String flash = null;
 
-		// Je récupère les mails a envoyé.
-		mails = mailRepos.findAllMailOftoDayForSendSms();
+		// Je recupère le params Api.
+		api = mailRepos.findOneParametreApi();
 
-		// Si la liste des mails n'est pas vide alors...
-		if (mails != null) {
+		// Je recupère l'url et flash dans l'api
+		for (Object[] objects : api) {
+			url = objects[0].toString();
+			flash = objects[1].toString();
+		}
 
-			// Je recupère le params Api.
-			api = mailRepos.findOneParametreApi();
+		// Si le parametre API n'est pas null alors...
+		if (api != null) {
 
-			// Si le parametre API n'est pas null alors...
-			if (api != null) {
+			// Je récupère les mails a envoyé.
+			mails = mailRepos.findAllMailOftoDayForSendSms();
 
-				// Je recupère l'url et flash dans l'api
-				for (Object[] objects : api) {
-					url = objects[0].toString();
-					flash = objects[1].toString();
-				}
+			// Si la liste des mails n'est pas vide alors...
+			if (mails != null) {
 
 				// Je parcours la liste des mails
 				for (Mail mail : mails) {
 
+					// Je recupère le username, le token, le sender et le titre.
 					username = mail.getUsername();
 					token = mail.getToken();
 					sender = mail.getSender();
-					title = mail.getApplicationEmailToSms();
+					title = mail.getNomApplicationEmailToSms();
 
 					// Je crée une instance de ArrayList<Message>.
 					ArrayList<Message> messageString = new ArrayList<Message>();
@@ -382,12 +380,9 @@ public class ServiceEmailToSms {
 			for (Mail m : mail) {
 				m.setEtat(1);
 				m.setDateModification(new Date());
-
 				mailRepos.save(m);
 			}
 			System.out.println(Utils.dateNow() + " Tous les mails ont été notifié et mis à jour.");
-		} else {
-			System.out.println(Utils.dateNow() + " La liste des mails est vide pour la mise à jour.");
 		}
 	}
 

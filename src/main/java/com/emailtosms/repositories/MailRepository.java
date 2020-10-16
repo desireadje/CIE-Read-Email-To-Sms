@@ -10,8 +10,8 @@ import com.emailtosms.entities.Mail;
 public interface MailRepository extends JpaRepository<Mail, Long> {
 
 	// Cette requête retourne un EmailReceive par son code
-	@Query("SELECT m FROM Mail m WHERE m.code= ?1")
-	Mail findMailByIdentitifiant(String code);
+	@Query("SELECT m FROM Mail m WHERE m.reference= ?1")
+	Mail findMailByIdentitifiant(String reference);
 
 	// Cette requête retourne une liste CallMissed
 	@Query("SELECT c FROM Mail c ORDER BY c.id DESC")
